@@ -16,11 +16,11 @@ const (
 type OrderType string
 
 const (
-	OrderTypeLimit  OrderType = "LIMIT"
-	OrderTypeMarket OrderType = "MARKET"
-	OrderTypeStop   OrderType = "STOP"
-	OrderTypeStopMarket OrderType = "STOP_MARKET"
-	OrderTypeTakeProfit OrderType = "TAKE_PROFIT"
+	OrderTypeLimit            OrderType = "LIMIT"
+	OrderTypeMarket           OrderType = "MARKET"
+	OrderTypeStop             OrderType = "STOP"
+	OrderTypeStopMarket       OrderType = "STOP_MARKET"
+	OrderTypeTakeProfit       OrderType = "TAKE_PROFIT"
 	OrderTypeTakeProfitMarket OrderType = "TAKE_PROFIT_MARKET"
 )
 
@@ -69,15 +69,15 @@ const (
 
 // ExchangeInfo represents the exchange information
 type ExchangeInfo struct {
-	Timezone   string    `json:"timezone"`
-	ServerTime int64     `json:"serverTime"`
+	Timezone   string `json:"timezone"`
+	ServerTime int64  `json:"serverTime"`
 	RateLimits []struct {
 		RateLimitType string `json:"rateLimitType"`
 		Interval      string `json:"interval"`
 		IntervalNum   int    `json:"intervalNum"`
 		Limit         int    `json:"limit"`
 	} `json:"rateLimits"`
-	ExchangeFilters []interface{} `json:"exchangeFilters"`
+	ExchangeFilters []any `json:"exchangeFilters"`
 	Assets          []struct {
 		Asset string `json:"asset"`
 	} `json:"assets"`
@@ -86,18 +86,18 @@ type ExchangeInfo struct {
 
 // Symbol represents a trading symbol
 type Symbol struct {
-	Symbol                string   `json:"symbol"`
-	Status                string   `json:"status"`
-	BaseAsset             string   `json:"baseAsset"`
-	QuoteAsset            string   `json:"quoteAsset"`
-	PricePrecision        int      `json:"pricePrecision"`
-	QuantityPrecision     int      `json:"quantityPrecision"`
-	BaseAssetPrecision    int      `json:"baseAssetPrecision"`
-	QuotePrecision        int      `json:"quotePrecision"`
-	Filters               []Filter `json:"filters"`
-	OrderTypes            []string `json:"orderTypes"`
-	TimeInForce           []string `json:"timeInForce"`
-	OcoAllowed            bool     `json:"ocoAllowed"`
+	Symbol             string   `json:"symbol"`
+	Status             string   `json:"status"`
+	BaseAsset          string   `json:"baseAsset"`
+	QuoteAsset         string   `json:"quoteAsset"`
+	PricePrecision     int      `json:"pricePrecision"`
+	QuantityPrecision  int      `json:"quantityPrecision"`
+	BaseAssetPrecision int      `json:"baseAssetPrecision"`
+	QuotePrecision     int      `json:"quotePrecision"`
+	Filters            []Filter `json:"filters"`
+	OrderTypes         []string `json:"orderTypes"`
+	TimeInForce        []string `json:"timeInForce"`
+	OcoAllowed         bool     `json:"ocoAllowed"`
 }
 
 // Filter represents a symbol filter
@@ -125,9 +125,9 @@ type Filter struct {
 
 // OrderBook represents the order book
 type OrderBook struct {
-	LastUpdateID int64     `json:"lastUpdateId"`
-	E            int64     `json:"E"` // Message output time
-	T            int64     `json:"T"` // Transaction time
+	LastUpdateID int64      `json:"lastUpdateId"`
+	E            int64      `json:"E"` // Message output time
+	T            int64      `json:"T"` // Transaction time
 	Bids         [][]string `json:"bids"`
 	Asks         [][]string `json:"asks"`
 }
@@ -144,13 +144,13 @@ type Trade struct {
 
 // AggTrade represents an aggregated trade
 type AggTrade struct {
-	A  int64           `json:"a"` // Aggregate trade ID
-	P  decimal.Decimal `json:"p"` // Price
-	Q  decimal.Decimal `json:"q"` // Quantity
-	F  int64           `json:"f"` // First trade ID
-	L  int64           `json:"l"` // Last trade ID
-	T  int64           `json:"T"` // Timestamp
-	M  bool            `json:"m"` // Was the buyer the maker?
+	A int64           `json:"a"` // Aggregate trade ID
+	P decimal.Decimal `json:"p"` // Price
+	Q decimal.Decimal `json:"q"` // Quantity
+	F int64           `json:"f"` // First trade ID
+	L int64           `json:"l"` // Last trade ID
+	T int64           `json:"T"` // Timestamp
+	M bool            `json:"m"` // Was the buyer the maker?
 }
 
 // Kline represents a kline/candlestick
@@ -214,9 +214,9 @@ type BookTicker struct {
 
 // CommissionRate represents commission rates
 type CommissionRate struct {
-	Symbol                string          `json:"symbol"`
-	MakerCommissionRate   decimal.Decimal `json:"makerCommissionRate"`
-	TakerCommissionRate   decimal.Decimal `json:"takerCommissionRate"`
+	Symbol              string          `json:"symbol"`
+	MakerCommissionRate decimal.Decimal `json:"makerCommissionRate"`
+	TakerCommissionRate decimal.Decimal `json:"takerCommissionRate"`
 }
 
 // Order represents an order
@@ -245,11 +245,11 @@ type Order struct {
 // Account represents account information
 type Account struct {
 	FeeTier      int       `json:"feeTier"`
-	CanTrade    bool      `json:"canTrade"`
-	CanDeposit  bool      `json:"canDeposit"`
-	CanWithdraw bool      `json:"canWithdraw"`
-	CanBurnAsset bool     `json:"canBurnAsset"`
-	UpdateTime  int64     `json:"updateTime"`
+	CanTrade     bool      `json:"canTrade"`
+	CanDeposit   bool      `json:"canDeposit"`
+	CanWithdraw  bool      `json:"canWithdraw"`
+	CanBurnAsset bool      `json:"canBurnAsset"`
+	UpdateTime   int64     `json:"updateTime"`
 	Balances     []Balance `json:"balances"`
 }
 
@@ -262,40 +262,40 @@ type Balance struct {
 
 // UserTrade represents a user trade
 type UserTrade struct {
-	Symbol           string          `json:"symbol"`
-	ID               int64           `json:"id"`
-	OrderID          int64           `json:"orderId"`
-	Side             string          `json:"side"`
-	Price            decimal.Decimal `json:"price"`
-	Qty              decimal.Decimal `json:"qty"`
-	QuoteQty         decimal.Decimal `json:"quoteQty"`
-	Commission       decimal.Decimal `json:"commission"`
-	CommissionAsset  string          `json:"commissionAsset"`
-	Time             int64           `json:"time"`
-	CounterpartyID   int64           `json:"counterpartyId"`
-	CreateUpdateID   *int64          `json:"createUpdateId"`
-	Maker            bool            `json:"maker"`
-	Buyer            bool            `json:"buyer"`
+	Symbol          string          `json:"symbol"`
+	ID              int64           `json:"id"`
+	OrderID         int64           `json:"orderId"`
+	Side            string          `json:"side"`
+	Price           decimal.Decimal `json:"price"`
+	Qty             decimal.Decimal `json:"qty"`
+	QuoteQty        decimal.Decimal `json:"quoteQty"`
+	Commission      decimal.Decimal `json:"commission"`
+	CommissionAsset string          `json:"commissionAsset"`
+	Time            int64           `json:"time"`
+	CounterpartyID  int64           `json:"counterpartyId"`
+	CreateUpdateID  *int64          `json:"createUpdateId"`
+	Maker           bool            `json:"maker"`
+	Buyer           bool            `json:"buyer"`
 }
 
 // TransferRequest represents a transfer request
 type TransferRequest struct {
-	Amount        decimal.Decimal `json:"amount"`
-	Asset         string          `json:"asset"`
-	ClientTranID  string          `json:"clientTranId"`
-	KindType      string          `json:"kindType"` // FUTURE_SPOT or SPOT_FUTURE
+	Amount       decimal.Decimal `json:"amount"`
+	Asset        string          `json:"asset"`
+	ClientTranID string          `json:"clientTranId"`
+	KindType     string          `json:"kindType"` // FUTURE_SPOT or SPOT_FUTURE
 }
 
 // TransferResponse represents a transfer response
 type TransferResponse struct {
-	TranID  int64  `json:"tranId"`
-	Status  string `json:"status"`
+	TranID int64  `json:"tranId"`
+	Status string `json:"status"`
 }
 
 // WithdrawFeeRequest represents a withdraw fee request
 type WithdrawFeeRequest struct {
 	ChainID string `json:"chainId"`
-	Asset    string `json:"asset"`
+	Asset   string `json:"asset"`
 }
 
 // WithdrawFeeResponse represents a withdraw fee response

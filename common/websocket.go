@@ -13,21 +13,21 @@ import (
 
 // WebSocketClient represents a WebSocket client
 type WebSocketClient struct {
-	conn        *websocket.Conn
-	url         string
-	mu          sync.RWMutex
-	handlers    map[string][]func(any)
-	connected   bool
-	reconnect   bool
+	conn              *websocket.Conn
+	url               string
+	mu                sync.RWMutex
+	handlers          map[string][]func(any)
+	connected         bool
+	reconnect         bool
 	reconnectInterval time.Duration
-	ctx         context.Context
-	cancel      context.CancelFunc
+	ctx               context.Context
+	cancel            context.CancelFunc
 }
 
 // WebSocketMessage represents a WebSocket message
 type WebSocketMessage struct {
-	Stream string      `json:"stream"`
-	Data   interface{} `json:"data"`
+	Stream string `json:"stream"`
+	Data   any    `json:"data"`
 }
 
 // NewWebSocketClient creates a new WebSocket client
@@ -94,7 +94,7 @@ func (c *WebSocketClient) Subscribe(stream string, handler func(any)) {
 
 	// Send subscription message if connected
 	if c.connected && c.conn != nil {
-		subscribeMsg := map[string]interface{}{
+		subscribeMsg := map[string]any{
 			"method": "SUBSCRIBE",
 			"params": []string{stream},
 			"id":     time.Now().Unix(),
@@ -113,7 +113,7 @@ func (c *WebSocketClient) Unsubscribe(stream string) {
 
 	// Send unsubscription message if connected
 	if c.connected && c.conn != nil {
-		unsubscribeMsg := map[string]interface{}{
+		unsubscribeMsg := map[string]any{
 			"method": "UNSUBSCRIBE",
 			"params": []string{stream},
 			"id":     time.Now().Unix(),
@@ -163,7 +163,7 @@ func (c *WebSocketClient) handleMessages() {
 // handleRawMessage handles raw messages
 func (c *WebSocketClient) handleRawMessage(message []byte) {
 	// Try to parse as JSON object
-	var data map[string]interface{}
+	var data map[string]any
 	if err := json.Unmarshal(message, &data); err != nil {
 		return
 	}
@@ -175,7 +175,7 @@ func (c *WebSocketClient) handleRawMessage(message []byte) {
 }
 
 // handleStreamMessage handles messages for a specific stream
-func (c *WebSocketClient) handleStreamMessage(stream string, data interface{}) {
+func (c *WebSocketClient) handleStreamMessage(stream string, data any) {
 	c.mu.RLock()
 	handlers := c.handlers[stream]
 	c.mu.RUnlock()
