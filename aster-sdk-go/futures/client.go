@@ -59,7 +59,7 @@ func (c *Client) GetExchangeInfo() (*ExchangeInfo, error) {
 
 // GetOrderBook gets the order book for a symbol
 func (c *Client) GetOrderBook(symbol string, limit int) (*OrderBook, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	if limit > 0 {
@@ -73,7 +73,7 @@ func (c *Client) GetOrderBook(symbol string, limit int) (*OrderBook, error) {
 
 // GetRecentTrades gets recent trades for a symbol
 func (c *Client) GetRecentTrades(symbol string, limit int) ([]Trade, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	if limit > 0 {
@@ -87,7 +87,7 @@ func (c *Client) GetRecentTrades(symbol string, limit int) ([]Trade, error) {
 
 // GetHistoricalTrades gets historical trades for a symbol
 func (c *Client) GetHistoricalTrades(symbol string, limit int, fromID int64) ([]Trade, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	if limit > 0 {
@@ -104,7 +104,7 @@ func (c *Client) GetHistoricalTrades(symbol string, limit int, fromID int64) ([]
 
 // GetAggTrades gets compressed/aggregate trades for a symbol
 func (c *Client) GetAggTrades(symbol string, fromID, startTime, endTime int64, limit int) ([]AggTrade, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	if fromID > 0 {
@@ -127,7 +127,7 @@ func (c *Client) GetAggTrades(symbol string, fromID, startTime, endTime int64, l
 
 // GetKlines gets kline/candlestick data for a symbol
 func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, endTime int64, limit int) ([]Kline, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":   symbol,
 		"interval": interval,
 	}
@@ -141,7 +141,7 @@ func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, end
 		params["limit"] = limit
 	}
 	
-	var result [][]interface{}
+	var result [][]any
 	err := c.Do("GET", "/fapi/v1/klines", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, end
 
 // GetIndexPriceKlines gets index price kline/candlestick data
 func (c *Client) GetIndexPriceKlines(pair string, interval KlineInterval, startTime, endTime int64, limit int) ([]Kline, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"pair":     pair,
 		"interval": interval,
 	}
@@ -187,7 +187,7 @@ func (c *Client) GetIndexPriceKlines(pair string, interval KlineInterval, startT
 		params["limit"] = limit
 	}
 	
-	var result [][]interface{}
+	var result [][]any
 	err := c.Do("GET", "/fapi/v1/indexPriceKlines", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -219,7 +219,7 @@ func (c *Client) GetIndexPriceKlines(pair string, interval KlineInterval, startT
 
 // GetMarkPriceKlines gets mark price kline/candlestick data
 func (c *Client) GetMarkPriceKlines(symbol string, interval KlineInterval, startTime, endTime int64, limit int) ([]Kline, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":   symbol,
 		"interval": interval,
 	}
@@ -233,7 +233,7 @@ func (c *Client) GetMarkPriceKlines(symbol string, interval KlineInterval, start
 		params["limit"] = limit
 	}
 	
-	var result [][]interface{}
+	var result [][]any
 	err := c.Do("GET", "/fapi/v1/markPriceKlines", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -265,12 +265,12 @@ func (c *Client) GetMarkPriceKlines(symbol string, interval KlineInterval, start
 
 // GetMarkPrice gets mark price
 func (c *Client) GetMarkPrice(symbol string) (*MarkPrice, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
 	
-	var result interface{}
+	var result any
 	err := c.Do("GET", "/fapi/v1/premiumIndex", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -278,14 +278,14 @@ func (c *Client) GetMarkPrice(symbol string) (*MarkPrice, error) {
 	
 	// Handle both single mark price and array of mark prices
 	switch v := result.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		var markPrice MarkPrice
 		err = c.parseMarkPrice(v, &markPrice)
 		return &markPrice, err
-	case []interface{}:
+	case []any:
 		if len(v) > 0 {
 			var markPrice MarkPrice
-			err = c.parseMarkPrice(v[0].(map[string]interface{}), &markPrice)
+			err = c.parseMarkPrice(v[0].(map[string]any), &markPrice)
 			return &markPrice, err
 		}
 	}
@@ -302,7 +302,7 @@ func (c *Client) GetAllMarkPrices() ([]MarkPrice, error) {
 
 // GetFundingRateHistory gets funding rate history
 func (c *Client) GetFundingRateHistory(symbol string, startTime, endTime int64, limit int) ([]FundingRate, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -323,7 +323,7 @@ func (c *Client) GetFundingRateHistory(symbol string, startTime, endTime int64, 
 
 // GetFundingRateConfig gets funding rate configuration
 func (c *Client) GetFundingRateConfig(symbol string) (*FundingRateConfig, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -335,12 +335,12 @@ func (c *Client) GetFundingRateConfig(symbol string) (*FundingRateConfig, error)
 
 // GetTicker24hr gets 24hr ticker price change statistics
 func (c *Client) GetTicker24hr(symbol string) (*Ticker24hr, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
 	
-	var result interface{}
+	var result any
 	err := c.Do("GET", "/fapi/v1/ticker/24hr", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -348,14 +348,14 @@ func (c *Client) GetTicker24hr(symbol string) (*Ticker24hr, error) {
 	
 	// Handle both single ticker and array of tickers
 	switch v := result.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		var ticker Ticker24hr
 		err = c.parseTicker24hr(v, &ticker)
 		return &ticker, err
-	case []interface{}:
+	case []any:
 		if len(v) > 0 {
 			var ticker Ticker24hr
-			err = c.parseTicker24hr(v[0].(map[string]interface{}), &ticker)
+			err = c.parseTicker24hr(v[0].(map[string]any), &ticker)
 			return &ticker, err
 		}
 	}
@@ -372,12 +372,12 @@ func (c *Client) GetAllTickers24hr() ([]Ticker24hr, error) {
 
 // GetPrice gets the latest price for a symbol
 func (c *Client) GetPrice(symbol string) (*PriceTicker, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
 	
-	var result interface{}
+	var result any
 	err := c.Do("GET", "/fapi/v1/ticker/price", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -385,14 +385,14 @@ func (c *Client) GetPrice(symbol string) (*PriceTicker, error) {
 	
 	// Handle both single price and array of prices
 	switch v := result.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		var price PriceTicker
 		err = c.parsePriceTicker(v, &price)
 		return &price, err
-	case []interface{}:
+	case []any:
 		if len(v) > 0 {
 			var price PriceTicker
-			err = c.parsePriceTicker(v[0].(map[string]interface{}), &price)
+			err = c.parsePriceTicker(v[0].(map[string]any), &price)
 			return &price, err
 		}
 	}
@@ -409,12 +409,12 @@ func (c *Client) GetAllPrices() ([]PriceTicker, error) {
 
 // GetBookTicker gets the best bid/ask for a symbol
 func (c *Client) GetBookTicker(symbol string) (*BookTicker, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
 	
-	var result interface{}
+	var result any
 	err := c.Do("GET", "/fapi/v1/ticker/bookTicker", params, &result, false)
 	if err != nil {
 		return nil, err
@@ -422,14 +422,14 @@ func (c *Client) GetBookTicker(symbol string) (*BookTicker, error) {
 	
 	// Handle both single book ticker and array of book tickers
 	switch v := result.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		var bookTicker BookTicker
 		err = c.parseBookTicker(v, &bookTicker)
 		return &bookTicker, err
-	case []interface{}:
+	case []any:
 		if len(v) > 0 {
 			var bookTicker BookTicker
-			err = c.parseBookTicker(v[0].(map[string]interface{}), &bookTicker)
+			err = c.parseBookTicker(v[0].(map[string]any), &bookTicker)
 			return &bookTicker, err
 		}
 	}
@@ -448,7 +448,7 @@ func (c *Client) GetAllBookTickers() ([]BookTicker, error) {
 
 // ChangePositionMode changes position mode
 func (c *Client) ChangePositionMode(req *ChangePositionModeRequest) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"dualSidePosition": req.DualSidePosition,
 	}
 	return c.Do("POST", "/fapi/v1/positionSide/dual", params, nil, true)
@@ -465,7 +465,7 @@ func (c *Client) GetCurrentPositionMode() (bool, error) {
 
 // ChangeMultiAssetsMode changes multi-assets mode
 func (c *Client) ChangeMultiAssetsMode(req *ChangeMultiAssetsModeRequest) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"multiAssetsMargin": req.MultiAssetsMargin,
 	}
 	return c.Do("POST", "/fapi/v1/multiAssetsMargin", params, nil, true)
@@ -482,7 +482,7 @@ func (c *Client) GetCurrentMultiAssetsMode() (bool, error) {
 
 // NewOrder places a new order
 func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": req.Symbol,
 		"side":   req.Side,
 		"type":   req.Type,
@@ -532,7 +532,7 @@ func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
 
 // PlaceMultipleOrders places multiple orders
 func (c *Client) PlaceMultipleOrders(orders []NewOrderRequest) ([]Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"batchOrders": orders,
 	}
 	
@@ -543,7 +543,7 @@ func (c *Client) PlaceMultipleOrders(orders []NewOrderRequest) ([]Order, error) 
 
 // Transfer transfers between futures and spot
 func (c *Client) Transfer(req *TransferRequest) (*TransferResponse, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"asset":  req.Asset,
 		"amount": req.Amount,
 		"type":   req.Type,
@@ -556,7 +556,7 @@ func (c *Client) Transfer(req *TransferRequest) (*TransferResponse, error) {
 
 // GetOrder gets order information
 func (c *Client) GetOrder(symbol string, orderID int64, origClientOrderID string) (*Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	
@@ -574,7 +574,7 @@ func (c *Client) GetOrder(symbol string, orderID int64, origClientOrderID string
 
 // CancelOrder cancels an order
 func (c *Client) CancelOrder(symbol string, orderID int64, origClientOrderID string) (*Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	
@@ -592,7 +592,7 @@ func (c *Client) CancelOrder(symbol string, orderID int64, origClientOrderID str
 
 // CancelAllOpenOrders cancels all open orders
 func (c *Client) CancelAllOpenOrders(symbol string) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	return c.Do("DELETE", "/fapi/v1/allOpenOrders", params, nil, true)
@@ -600,7 +600,7 @@ func (c *Client) CancelAllOpenOrders(symbol string) error {
 
 // CancelMultipleOrders cancels multiple orders
 func (c *Client) CancelMultipleOrders(symbol string, orderIDList []int64, origClientOrderIDList []string) ([]Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	
@@ -618,7 +618,7 @@ func (c *Client) CancelMultipleOrders(symbol string, orderIDList []int64, origCl
 
 // AutoCancelAllOpenOrders cancels all open orders with countdown
 func (c *Client) AutoCancelAllOpenOrders(symbol string, countdownTime int64) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":         symbol,
 		"countdownTime": countdownTime,
 	}
@@ -627,7 +627,7 @@ func (c *Client) AutoCancelAllOpenOrders(symbol string, countdownTime int64) err
 
 // GetOpenOrders gets all open orders
 func (c *Client) GetOpenOrders(symbol string) ([]Order, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -639,7 +639,7 @@ func (c *Client) GetOpenOrders(symbol string) ([]Order, error) {
 
 // GetAllOrders gets all orders
 func (c *Client) GetAllOrders(symbol string, orderID, startTime, endTime int64, limit int) ([]Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	
@@ -677,7 +677,7 @@ func (c *Client) GetBalance() ([]Asset, error) {
 
 // ChangeLeverage changes initial leverage
 func (c *Client) ChangeLeverage(req *ChangeLeverageRequest) (*Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":   req.Symbol,
 		"leverage": req.Leverage,
 	}
@@ -689,7 +689,7 @@ func (c *Client) ChangeLeverage(req *ChangeLeverageRequest) (*Order, error) {
 
 // ChangeMarginType changes margin type
 func (c *Client) ChangeMarginType(req *ChangeMarginTypeRequest) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":     req.Symbol,
 		"marginType": req.MarginType,
 	}
@@ -698,7 +698,7 @@ func (c *Client) ChangeMarginType(req *ChangeMarginTypeRequest) error {
 
 // ModifyIsolatedPositionMargin modifies isolated position margin
 func (c *Client) ModifyIsolatedPositionMargin(req *ModifyIsolatedPositionMarginRequest) (*Order, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":  req.Symbol,
 		"amount":  req.Amount,
 		"type":    req.Type,
@@ -711,7 +711,7 @@ func (c *Client) ModifyIsolatedPositionMargin(req *ModifyIsolatedPositionMarginR
 
 // GetPositionMarginChangeHistory gets position margin change history
 func (c *Client) GetPositionMarginChangeHistory(symbol string, startTime, endTime int64, limit int) ([]PositionMarginChangeHistory, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -732,7 +732,7 @@ func (c *Client) GetPositionMarginChangeHistory(symbol string, startTime, endTim
 
 // GetPositionInfo gets position information
 func (c *Client) GetPositionInfo(symbol string) ([]Position, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -744,7 +744,7 @@ func (c *Client) GetPositionInfo(symbol string) ([]Position, error) {
 
 // GetUserTrades gets user trade history
 func (c *Client) GetUserTrades(symbol string, orderID, startTime, endTime, fromID int64, limit int) ([]UserTrade, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -771,7 +771,7 @@ func (c *Client) GetUserTrades(symbol string, orderID, startTime, endTime, fromI
 
 // GetIncomeHistory gets income history
 func (c *Client) GetIncomeHistory(symbol string, incomeType string, startTime, endTime int64, limit int) ([]Income, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -795,7 +795,7 @@ func (c *Client) GetIncomeHistory(symbol string, incomeType string, startTime, e
 
 // GetNotionalBracket gets notional and leverage brackets
 func (c *Client) GetNotionalBracket(symbol string) ([]NotionalBracket, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -807,7 +807,7 @@ func (c *Client) GetNotionalBracket(symbol string) ([]NotionalBracket, error) {
 
 // GetADLQuantile gets position ADL quantile estimation
 func (c *Client) GetADLQuantile(symbol string) ([]ADLQuantile, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -819,7 +819,7 @@ func (c *Client) GetADLQuantile(symbol string) ([]ADLQuantile, error) {
 
 // GetForceOrders gets user's force orders
 func (c *Client) GetForceOrders(symbol string, autoCloseType string, startTime, endTime int64, limit int) ([]ForceOrder, error) {
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	if symbol != "" {
 		params["symbol"] = symbol
 	}
@@ -843,7 +843,7 @@ func (c *Client) GetForceOrders(symbol string, autoCloseType string, startTime, 
 
 // GetCommissionRate gets user commission rate
 func (c *Client) GetCommissionRate(symbol string) (*CommissionRate, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 	
@@ -863,7 +863,7 @@ func (c *Client) CreateListenKey() (*ListenKeyResponse, error) {
 
 // KeepAliveListenKey keeps the listen key alive
 func (c *Client) KeepAliveListenKey(listenKey string) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"listenKey": listenKey,
 	}
 	return c.Do("PUT", "/fapi/v1/listenKey", params, nil, true)
@@ -871,7 +871,7 @@ func (c *Client) KeepAliveListenKey(listenKey string) error {
 
 // CloseListenKey closes the listen key
 func (c *Client) CloseListenKey(listenKey string) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"listenKey": listenKey,
 	}
 	return c.Do("DELETE", "/fapi/v1/listenKey", params, nil, true)
@@ -879,7 +879,7 @@ func (c *Client) CloseListenKey(listenKey string) error {
 
 // Helper methods for parsing responses
 
-func (c *Client) parseMarkPrice(data map[string]interface{}, markPrice *MarkPrice) error {
+func (c *Client) parseMarkPrice(data map[string]any, markPrice *MarkPrice) error {
 	if symbol, ok := data["symbol"].(string); ok {
 		markPrice.Symbol = symbol
 	}
@@ -907,7 +907,7 @@ func (c *Client) parseMarkPrice(data map[string]interface{}, markPrice *MarkPric
 	return nil
 }
 
-func (c *Client) parseTicker24hr(data map[string]interface{}, ticker *Ticker24hr) error {
+func (c *Client) parseTicker24hr(data map[string]any, ticker *Ticker24hr) error {
 	// Parse the ticker data from the map
 	// This is a simplified version - in practice you'd want more robust parsing
 	if symbol, ok := data["symbol"].(string); ok {
@@ -920,7 +920,7 @@ func (c *Client) parseTicker24hr(data map[string]interface{}, ticker *Ticker24hr
 	return nil
 }
 
-func (c *Client) parsePriceTicker(data map[string]interface{}, price *PriceTicker) error {
+func (c *Client) parsePriceTicker(data map[string]any, price *PriceTicker) error {
 	if symbol, ok := data["symbol"].(string); ok {
 		price.Symbol = symbol
 	}
@@ -933,7 +933,7 @@ func (c *Client) parsePriceTicker(data map[string]interface{}, price *PriceTicke
 	return nil
 }
 
-func (c *Client) parseBookTicker(data map[string]interface{}, bookTicker *BookTicker) error {
+func (c *Client) parseBookTicker(data map[string]any, bookTicker *BookTicker) error {
 	if symbol, ok := data["symbol"].(string); ok {
 		bookTicker.Symbol = symbol
 	}

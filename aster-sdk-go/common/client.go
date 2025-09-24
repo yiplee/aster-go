@@ -60,7 +60,7 @@ func (c *Client) SetBaseURL(baseURL string) {
 }
 
 // DoRequest performs an HTTP request
-func (c *Client) DoRequest(method, endpoint string, params map[string]interface{}, signed bool) (*http.Response, error) {
+func (c *Client) DoRequest(method, endpoint string, params map[string]any, signed bool) (*http.Response, error) {
 	url := c.config.BaseURL + endpoint
 	
 	var body io.Reader
@@ -130,7 +130,7 @@ func (c *Client) DoRequest(method, endpoint string, params map[string]interface{
 }
 
 // ParseResponse parses the HTTP response
-func (c *Client) ParseResponse(resp *http.Response, result interface{}) error {
+func (c *Client) ParseResponse(resp *http.Response, result any) error {
 	defer resp.Body.Close()
 	
 	body, err := io.ReadAll(resp.Body)
@@ -156,7 +156,7 @@ func (c *Client) ParseResponse(resp *http.Response, result interface{}) error {
 }
 
 // Do performs a request and parses the response
-func (c *Client) Do(method, endpoint string, params map[string]interface{}, result interface{}, signed bool) error {
+func (c *Client) Do(method, endpoint string, params map[string]any, result any, signed bool) error {
 	resp, err := c.DoRequest(method, endpoint, params, signed)
 	if err != nil {
 		return err

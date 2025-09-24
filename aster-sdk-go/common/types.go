@@ -61,7 +61,7 @@ func SignRequest(params map[string]string, secretKey string) string {
 }
 
 // BuildQueryString builds a query string from parameters
-func BuildQueryString(params map[string]interface{}) string {
+func BuildQueryString(params map[string]any) string {
 	values := url.Values{}
 	for key, value := range params {
 		switch v := value.(type) {
