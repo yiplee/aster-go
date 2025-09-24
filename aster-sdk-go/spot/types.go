@@ -1,6 +1,8 @@
 package spot
 
-import "time"
+import (
+	"github.com/shopspring/decimal"
+)
 
 // OrderSide represents the order side
 type OrderSide string
@@ -132,112 +134,112 @@ type OrderBook struct {
 
 // Trade represents a trade
 type Trade struct {
-	ID           int64   `json:"id"`
-	Price        string  `json:"price"`
-	Qty          string  `json:"qty"`
-	BaseQty      string  `json:"baseQty"`
-	Time         int64   `json:"time"`
-	IsBuyerMaker bool    `json:"isBuyerMaker"`
+	ID           int64           `json:"id"`
+	Price        decimal.Decimal `json:"price"`
+	Qty          decimal.Decimal `json:"qty"`
+	BaseQty      decimal.Decimal `json:"baseQty"`
+	Time         int64           `json:"time"`
+	IsBuyerMaker bool            `json:"isBuyerMaker"`
 }
 
 // AggTrade represents an aggregated trade
 type AggTrade struct {
-	A  int64  `json:"a"` // Aggregate trade ID
-	P  string `json:"p"` // Price
-	Q  string `json:"q"` // Quantity
-	F  int64  `json:"f"` // First trade ID
-	L  int64  `json:"l"` // Last trade ID
-	T  int64  `json:"T"` // Timestamp
-	M  bool   `json:"m"` // Was the buyer the maker?
+	A  int64           `json:"a"` // Aggregate trade ID
+	P  decimal.Decimal `json:"p"` // Price
+	Q  decimal.Decimal `json:"q"` // Quantity
+	F  int64           `json:"f"` // First trade ID
+	L  int64           `json:"l"` // Last trade ID
+	T  int64           `json:"T"` // Timestamp
+	M  bool            `json:"m"` // Was the buyer the maker?
 }
 
 // Kline represents a kline/candlestick
 type Kline struct {
-	OpenTime                 int64   `json:"openTime"`
-	Open                     string  `json:"open"`
-	High                     string  `json:"high"`
-	Low                      string  `json:"low"`
-	Close                    string  `json:"close"`
-	Volume                   string  `json:"volume"`
-	CloseTime                int64   `json:"closeTime"`
-	QuoteAssetVolume         string  `json:"quoteAssetVolume"`
-	NumberOfTrades           int     `json:"numberOfTrades"`
-	TakerBuyBaseAssetVolume  string  `json:"takerBuyBaseAssetVolume"`
-	TakerBuyQuoteAssetVolume string  `json:"takerBuyQuoteAssetVolume"`
+	OpenTime                 int64           `json:"openTime"`
+	Open                     decimal.Decimal `json:"open"`
+	High                     decimal.Decimal `json:"high"`
+	Low                      decimal.Decimal `json:"low"`
+	Close                    decimal.Decimal `json:"close"`
+	Volume                   decimal.Decimal `json:"volume"`
+	CloseTime                int64           `json:"closeTime"`
+	QuoteAssetVolume         decimal.Decimal `json:"quoteAssetVolume"`
+	NumberOfTrades           int             `json:"numberOfTrades"`
+	TakerBuyBaseAssetVolume  decimal.Decimal `json:"takerBuyBaseAssetVolume"`
+	TakerBuyQuoteAssetVolume decimal.Decimal `json:"takerBuyQuoteAssetVolume"`
 }
 
 // Ticker24hr represents 24hr ticker statistics
 type Ticker24hr struct {
-	Symbol             string `json:"symbol"`
-	PriceChange        string `json:"priceChange"`
-	PriceChangePercent string `json:"priceChangePercent"`
-	WeightedAvgPrice   string `json:"weightedAvgPrice"`
-	PrevClosePrice     string `json:"prevClosePrice"`
-	LastPrice          string `json:"lastPrice"`
-	LastQty            string `json:"lastQty"`
-	BidPrice            string `json:"bidPrice"`
-	BidQty              string `json:"bidQty"`
-	AskPrice            string `json:"askPrice"`
-	AskQty              string `json:"askQty"`
-	OpenPrice           string `json:"openPrice"`
-	HighPrice           string `json:"highPrice"`
-	LowPrice            string `json:"lowPrice"`
-	Volume              string `json:"volume"`
-	QuoteVolume         string `json:"quoteVolume"`
-	OpenTime            int64  `json:"openTime"`
-	CloseTime           int64  `json:"closeTime"`
-	FirstID             int64  `json:"firstId"`
-	LastID              int64  `json:"lastId"`
-	Count               int64  `json:"count"`
-	BaseAsset           string `json:"baseAsset"`
-	QuoteAsset          string `json:"quoteAsset"`
+	Symbol             string          `json:"symbol"`
+	PriceChange        decimal.Decimal `json:"priceChange"`
+	PriceChangePercent decimal.Decimal `json:"priceChangePercent"`
+	WeightedAvgPrice   decimal.Decimal `json:"weightedAvgPrice"`
+	PrevClosePrice     decimal.Decimal `json:"prevClosePrice"`
+	LastPrice          decimal.Decimal `json:"lastPrice"`
+	LastQty            decimal.Decimal `json:"lastQty"`
+	BidPrice           decimal.Decimal `json:"bidPrice"`
+	BidQty             decimal.Decimal `json:"bidQty"`
+	AskPrice           decimal.Decimal `json:"askPrice"`
+	AskQty             decimal.Decimal `json:"askQty"`
+	OpenPrice          decimal.Decimal `json:"openPrice"`
+	HighPrice          decimal.Decimal `json:"highPrice"`
+	LowPrice           decimal.Decimal `json:"lowPrice"`
+	Volume             decimal.Decimal `json:"volume"`
+	QuoteVolume        decimal.Decimal `json:"quoteVolume"`
+	OpenTime           int64           `json:"openTime"`
+	CloseTime          int64           `json:"closeTime"`
+	FirstID            int64           `json:"firstId"`
+	LastID             int64           `json:"lastId"`
+	Count              int64           `json:"count"`
+	BaseAsset          string          `json:"baseAsset"`
+	QuoteAsset         string          `json:"quoteAsset"`
 }
 
 // PriceTicker represents a price ticker
 type PriceTicker struct {
-	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
-	Time   int64  `json:"time"`
+	Symbol string          `json:"symbol"`
+	Price  decimal.Decimal `json:"price"`
+	Time   int64           `json:"time"`
 }
 
 // BookTicker represents the best bid/ask
 type BookTicker struct {
-	Symbol   string `json:"symbol"`
-	BidPrice string `json:"bidPrice"`
-	BidQty   string `json:"bidQty"`
-	AskPrice string `json:"askPrice"`
-	AskQty   string `json:"askQty"`
-	Time     int64  `json:"time"`
+	Symbol   string          `json:"symbol"`
+	BidPrice decimal.Decimal `json:"bidPrice"`
+	BidQty   decimal.Decimal `json:"bidQty"`
+	AskPrice decimal.Decimal `json:"askPrice"`
+	AskQty   decimal.Decimal `json:"askQty"`
+	Time     int64           `json:"time"`
 }
 
 // CommissionRate represents commission rates
 type CommissionRate struct {
-	Symbol                string `json:"symbol"`
-	MakerCommissionRate   string `json:"makerCommissionRate"`
-	TakerCommissionRate   string `json:"takerCommissionRate"`
+	Symbol                string          `json:"symbol"`
+	MakerCommissionRate   decimal.Decimal `json:"makerCommissionRate"`
+	TakerCommissionRate   decimal.Decimal `json:"takerCommissionRate"`
 }
 
 // Order represents an order
 type Order struct {
-	Symbol            string      `json:"symbol"`
-	OrderID           int64       `json:"orderId"`
-	ClientOrderID     string      `json:"clientOrderId"`
-	Price             string      `json:"price"`
-	OrigQty           string      `json:"origQty"`
-	ExecutedQty       string      `json:"executedQty"`
-	CumQuote          string      `json:"cumQuote"`
-	Status            OrderStatus `json:"status"`
-	TimeInForce       TimeInForce `json:"timeInForce"`
-	Type              OrderType   `json:"type"`
-	Side              OrderSide   `json:"side"`
-	StopPrice         string      `json:"stopPrice"`
-	IcebergQty        string      `json:"icebergQty"`
-	Time              int64       `json:"time"`
-	UpdateTime        int64       `json:"updateTime"`
-	IsWorking         bool        `json:"isWorking"`
-	OrigQuoteOrderQty string      `json:"origQuoteOrderQty"`
-	AvgPrice          string      `json:"avgPrice"`
-	OrigType          OrderType   `json:"origType"`
+	Symbol            string          `json:"symbol"`
+	OrderID           int64           `json:"orderId"`
+	ClientOrderID     string          `json:"clientOrderId"`
+	Price             decimal.Decimal `json:"price"`
+	OrigQty           decimal.Decimal `json:"origQty"`
+	ExecutedQty       decimal.Decimal `json:"executedQty"`
+	CumQuote          decimal.Decimal `json:"cumQuote"`
+	Status            OrderStatus     `json:"status"`
+	TimeInForce       TimeInForce     `json:"timeInForce"`
+	Type              OrderType       `json:"type"`
+	Side              OrderSide       `json:"side"`
+	StopPrice         decimal.Decimal `json:"stopPrice"`
+	IcebergQty        decimal.Decimal `json:"icebergQty"`
+	Time              int64           `json:"time"`
+	UpdateTime        int64           `json:"updateTime"`
+	IsWorking         bool            `json:"isWorking"`
+	OrigQuoteOrderQty decimal.Decimal `json:"origQuoteOrderQty"`
+	AvgPrice          decimal.Decimal `json:"avgPrice"`
+	OrigType          OrderType       `json:"origType"`
 }
 
 // Account represents account information
@@ -253,35 +255,35 @@ type Account struct {
 
 // Balance represents an account balance
 type Balance struct {
-	Asset  string `json:"asset"`
-	Free   string `json:"free"`
-	Locked string `json:"locked"`
+	Asset  string          `json:"asset"`
+	Free   decimal.Decimal `json:"free"`
+	Locked decimal.Decimal `json:"locked"`
 }
 
 // UserTrade represents a user trade
 type UserTrade struct {
-	Symbol           string `json:"symbol"`
-	ID               int64  `json:"id"`
-	OrderID          int64  `json:"orderId"`
-	Side             string `json:"side"`
-	Price            string `json:"price"`
-	Qty              string `json:"qty"`
-	QuoteQty         string `json:"quoteQty"`
-	Commission       string `json:"commission"`
-	CommissionAsset  string `json:"commissionAsset"`
-	Time             int64  `json:"time"`
-	CounterpartyID   int64  `json:"counterpartyId"`
-	CreateUpdateID   *int64 `json:"createUpdateId"`
-	Maker            bool   `json:"maker"`
-	Buyer            bool   `json:"buyer"`
+	Symbol           string          `json:"symbol"`
+	ID               int64           `json:"id"`
+	OrderID          int64           `json:"orderId"`
+	Side             string          `json:"side"`
+	Price            decimal.Decimal `json:"price"`
+	Qty              decimal.Decimal `json:"qty"`
+	QuoteQty         decimal.Decimal `json:"quoteQty"`
+	Commission       decimal.Decimal `json:"commission"`
+	CommissionAsset  string          `json:"commissionAsset"`
+	Time             int64           `json:"time"`
+	CounterpartyID   int64           `json:"counterpartyId"`
+	CreateUpdateID   *int64          `json:"createUpdateId"`
+	Maker            bool            `json:"maker"`
+	Buyer            bool            `json:"buyer"`
 }
 
 // TransferRequest represents a transfer request
 type TransferRequest struct {
-	Amount        string `json:"amount"`
-	Asset         string `json:"asset"`
-	ClientTranID  string `json:"clientTranId"`
-	KindType      string `json:"kindType"` // FUTURE_SPOT or SPOT_FUTURE
+	Amount        decimal.Decimal `json:"amount"`
+	Asset         string          `json:"asset"`
+	ClientTranID  string          `json:"clientTranId"`
+	KindType      string          `json:"kindType"` // FUTURE_SPOT or SPOT_FUTURE
 }
 
 // TransferResponse represents a transfer response
@@ -298,20 +300,20 @@ type WithdrawFeeRequest struct {
 
 // WithdrawFeeResponse represents a withdraw fee response
 type WithdrawFeeResponse struct {
-	TokenPrice   float64 `json:"tokenPrice"`
-	GasCost      float64 `json:"gasCost"`
-	GasUsdValue  float64 `json:"gasUsdValue"`
+	TokenPrice  decimal.Decimal `json:"tokenPrice"`
+	GasCost     decimal.Decimal `json:"gasCost"`
+	GasUsdValue decimal.Decimal `json:"gasUsdValue"`
 }
 
 // WithdrawRequest represents a withdraw request
 type WithdrawRequest struct {
-	ChainID       string `json:"chainId"`
-	Asset         string `json:"asset"`
-	Amount        string `json:"amount"`
-	Fee           string `json:"fee"`
-	Receiver      string `json:"receiver"`
-	Nonce         string `json:"nonce"`
-	UserSignature string `json:"userSignature"`
+	ChainID       string          `json:"chainId"`
+	Asset         string          `json:"asset"`
+	Amount        decimal.Decimal `json:"amount"`
+	Fee           decimal.Decimal `json:"fee"`
+	Receiver      string          `json:"receiver"`
+	Nonce         string          `json:"nonce"`
+	UserSignature string          `json:"userSignature"`
 }
 
 // WithdrawResponse represents a withdraw response

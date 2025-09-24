@@ -1,6 +1,10 @@
 package futures
 
-import "time"
+import (
+	"time"
+
+	"github.com/shopspring/decimal"
+)
 
 // OrderSide represents the order side
 type OrderSide string
@@ -160,12 +164,12 @@ type OrderBook struct {
 
 // Trade represents a trade
 type Trade struct {
-	ID           int64   `json:"id"`
-	Price        string  `json:"price"`
-	Qty          string  `json:"qty"`
-	BaseQty      string  `json:"baseQty"`
-	Time         int64   `json:"time"`
-	IsBuyerMaker bool    `json:"isBuyerMaker"`
+	ID           int64           `json:"id"`
+	Price        decimal.Decimal `json:"price"`
+	Qty          decimal.Decimal `json:"qty"`
+	BaseQty      decimal.Decimal `json:"baseQty"`
+	Time         int64           `json:"time"`
+	IsBuyerMaker bool            `json:"isBuyerMaker"`
 }
 
 // AggTrade represents an aggregated trade
@@ -210,7 +214,7 @@ type Ticker24hr struct {
 	OpenPrice           string `json:"openPrice"`
 	HighPrice           string `json:"highPrice"`
 	LowPrice            string `json:"lowPrice"`
-	Volume              string `json:"volume"`
+	Volume              decimal.Decimal `json:"volume"`
 	QuoteVolume         string `json:"quoteVolume"`
 	OpenTime            int64  `json:"openTime"`
 	CloseTime           int64  `json:"closeTime"`
@@ -224,7 +228,7 @@ type Ticker24hr struct {
 // PriceTicker represents a price ticker
 type PriceTicker struct {
 	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
+	Price  decimal.Decimal `json:"price"`
 	Time   int64  `json:"time"`
 }
 
@@ -300,16 +304,16 @@ type Account struct {
 	CanWithdraw bool      `json:"canWithdraw"`
 	CanBurnAsset bool     `json:"canBurnAsset"`
 	UpdateTime  int64     `json:"updateTime"`
-	TotalWalletBalance string `json:"totalWalletBalance"`
+	TotalWalletBalance decimal.Decimal `json:"totalWalletBalance"`
 	TotalUnrealizedProfit string `json:"totalUnrealizedProfit"`
-	TotalMarginBalance string `json:"totalMarginBalance"`
+	TotalMarginBalance decimal.Decimal `json:"totalMarginBalance"`
 	TotalInitialMargin string `json:"totalInitialMargin"`
 	TotalMaintMargin string `json:"totalMaintMargin"`
 	TotalPositionInitialMargin string `json:"totalPositionInitialMargin"`
 	TotalOpenOrderInitialMargin string `json:"totalOpenOrderInitialMargin"`
 	TotalCrossWalletBalance string `json:"totalCrossWalletBalance"`
 	TotalCrossUnPnl string `json:"totalCrossUnPnl"`
-	AvailableBalance string `json:"availableBalance"`
+	AvailableBalance decimal.Decimal `json:"availableBalance"`
 	MaxWithdrawAmount string `json:"maxWithdrawAmount"`
 	Assets          []Asset `json:"assets"`
 	Positions       []Position `json:"positions"`
@@ -318,16 +322,16 @@ type Account struct {
 // Asset represents an account asset
 type Asset struct {
 	Asset                string `json:"asset"`
-	WalletBalance       string `json:"walletBalance"`
+	WalletBalance       decimal.Decimal `json:"walletBalance"`
 	UnrealizedProfit    string `json:"unrealizedProfit"`
-	MarginBalance       string `json:"marginBalance"`
+	MarginBalance       decimal.Decimal `json:"marginBalance"`
 	MaintMargin         string `json:"maintMargin"`
 	InitialMargin       string `json:"initialMargin"`
 	PositionInitialMargin string `json:"positionInitialMargin"`
 	OpenOrderInitialMargin string `json:"openOrderInitialMargin"`
 	CrossWalletBalance  string `json:"crossWalletBalance"`
 	CrossUnPnl          string `json:"crossUnPnl"`
-	AvailableBalance    string `json:"availableBalance"`
+	AvailableBalance    decimal.Decimal `json:"availableBalance"`
 	MaxWithdrawAmount   string `json:"maxWithdrawAmount"`
 }
 
@@ -356,10 +360,10 @@ type UserTrade struct {
 	ID               int64  `json:"id"`
 	OrderID          int64  `json:"orderId"`
 	Side             string `json:"side"`
-	Price            string `json:"price"`
-	Qty              string `json:"qty"`
+	Price            decimal.Decimal `json:"price"`
+	Qty              decimal.Decimal `json:"qty"`
 	QuoteQty         string `json:"quoteQty"`
-	Commission       string `json:"commission"`
+	Commission       decimal.Decimal `json:"commission"`
 	CommissionAsset  string `json:"commissionAsset"`
 	Time             int64  `json:"time"`
 	CounterpartyID   int64  `json:"counterpartyId"`
@@ -409,7 +413,7 @@ type ForceOrder struct {
 	Symbol        string `json:"symbol"`
 	Status        string `json:"status"`
 	ClientOrderID string `json:"clientOrderId"`
-	Price         string `json:"price"`
+	Price         decimal.Decimal `json:"price"`
 	AvgPrice      string `json:"avgPrice"`
 	OrigQty       string `json:"origQty"`
 	ExecutedQty   string `json:"executedQty"`
@@ -432,7 +436,7 @@ type CommissionRate struct {
 // TransferRequest represents a transfer request
 type TransferRequest struct {
 	Asset  string `json:"asset"`
-	Amount string `json:"amount"`
+	Amount decimal.Decimal `json:"amount"`
 	Type   int    `json:"type"` // 1: from spot to futures, 2: from futures to spot
 }
 
@@ -466,13 +470,13 @@ type ChangeMarginTypeRequest struct {
 // ModifyIsolatedPositionMarginRequest represents a modify isolated position margin request
 type ModifyIsolatedPositionMarginRequest struct {
 	Symbol       string `json:"symbol"`
-	Amount      string `json:"amount"`
+	Amount      decimal.Decimal `json:"amount"`
 	Type        int    `json:"type"` // 1: add margin, 2: reduce margin
 }
 
 // PositionMarginChangeHistory represents position margin change history
 type PositionMarginChangeHistory struct {
-	Amount      string `json:"amount"`
+	Amount      decimal.Decimal `json:"amount"`
 	Asset       string `json:"asset"`
 	Symbol      string `json:"symbol"`
 	Time        int64  `json:"time"`

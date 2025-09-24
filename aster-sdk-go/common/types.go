@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 // APIError represents an API error response
@@ -24,12 +26,13 @@ func (e APIError) Error() string {
 
 // ClientConfig holds the configuration for the API client
 type ClientConfig struct {
-	APIKey     string
-	SecretKey  string
-	BaseURL    string
-	Testnet    bool
-	Timeout    time.Duration
-	RecvWindow int64
+	APIKey      string
+	SecretKey   string
+	BaseURL     string
+	Testnet     bool
+	Timeout     time.Duration
+	RecvWindow  int64
+	httpClient  HTTPClient
 }
 
 // DefaultConfig returns a default configuration
@@ -106,4 +109,29 @@ func ParseFloat(s string) (float64, error) {
 // ParseInt parses a string to int64
 func ParseInt(s string) (int64, error) {
 	return strconv.ParseInt(s, 10, 64)
+}
+
+// ParseDecimal parses a string to decimal.Decimal
+func ParseDecimal(s string) (decimal.Decimal, error) {
+	return decimal.NewFromString(s)
+}
+
+// FormatDecimal formats a decimal.Decimal to string
+func FormatDecimal(d decimal.Decimal) string {
+	return d.String()
+}
+
+// NewDecimalFromFloat creates a decimal from float64
+func NewDecimalFromFloat(f float64) decimal.Decimal {
+	return decimal.NewFromFloat(f)
+}
+
+// NewDecimalFromInt creates a decimal from int64
+func NewDecimalFromInt(i int64) decimal.Decimal {
+	return decimal.NewFromInt(i)
+}
+
+// NewDecimalFromString creates a decimal from string
+func NewDecimalFromString(s string) (decimal.Decimal, error) {
+	return decimal.NewFromString(s)
 }

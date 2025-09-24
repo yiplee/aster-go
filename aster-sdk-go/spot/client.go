@@ -2,10 +2,9 @@ package spot
 
 import (
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/asterdex/aster-sdk-go/common"
+	"github.com/shopspring/decimal"
 )
 
 // Client represents the spot trading client
@@ -153,18 +152,51 @@ func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, end
 			continue
 		}
 		
+		open, err := decimal.NewFromString(k[1].(string))
+		if err != nil {
+			open = decimal.Zero
+		}
+		high, err := decimal.NewFromString(k[2].(string))
+		if err != nil {
+			high = decimal.Zero
+		}
+		low, err := decimal.NewFromString(k[3].(string))
+		if err != nil {
+			low = decimal.Zero
+		}
+		close, err := decimal.NewFromString(k[4].(string))
+		if err != nil {
+			close = decimal.Zero
+		}
+		volume, err := decimal.NewFromString(k[5].(string))
+		if err != nil {
+			volume = decimal.Zero
+		}
+		quoteAssetVolume, err := decimal.NewFromString(k[7].(string))
+		if err != nil {
+			quoteAssetVolume = decimal.Zero
+		}
+		takerBuyBaseAssetVolume, err := decimal.NewFromString(k[9].(string))
+		if err != nil {
+			takerBuyBaseAssetVolume = decimal.Zero
+		}
+		takerBuyQuoteAssetVolume, err := decimal.NewFromString(k[10].(string))
+		if err != nil {
+			takerBuyQuoteAssetVolume = decimal.Zero
+		}
+		
 		klines[i] = Kline{
 			OpenTime:                 int64(k[0].(float64)),
-			Open:                     k[1].(string),
-			High:                     k[2].(string),
-			Low:                      k[3].(string),
-			Close:                    k[4].(string),
-			Volume:                   k[5].(string),
+			Open:                     open,
+			High:                     high,
+			Low:                      low,
+			Close:                    close,
+			Volume:                   volume,
 			CloseTime:                int64(k[6].(float64)),
-			QuoteAssetVolume:         k[7].(string),
+			QuoteAssetVolume:         quoteAssetVolume,
 			NumberOfTrades:           int(k[8].(float64)),
-			TakerBuyBaseAssetVolume:  k[9].(string),
-			TakerBuyQuoteAssetVolume: k[10].(string),
+			TakerBuyBaseAssetVolume:  takerBuyBaseAssetVolume,
+			TakerBuyQuoteAssetVolume: takerBuyQuoteAssetVolume,
 		}
 	}
 	
@@ -303,14 +335,14 @@ func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
 		"type":     req.Type,
 	}
 	
-	if req.Quantity != "" {
-		params["quantity"] = req.Quantity
+	if !req.Quantity.IsZero() {
+		params["quantity"] = req.Quantity.String()
 	}
-	if req.QuoteOrderQty != "" {
-		params["quoteOrderQty"] = req.QuoteOrderQty
+	if !req.QuoteOrderQty.IsZero() {
+		params["quoteOrderQty"] = req.QuoteOrderQty.String()
 	}
-	if req.Price != "" {
-		params["price"] = req.Price
+	if !req.Price.IsZero() {
+		params["price"] = req.Price.String()
 	}
 	if req.TimeInForce != "" {
 		params["timeInForce"] = req.TimeInForce
@@ -318,8 +350,8 @@ func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
 	if req.NewClientOrderID != "" {
 		params["newClientOrderId"] = req.NewClientOrderID
 	}
-	if req.StopPrice != "" {
-		params["stopPrice"] = req.StopPrice
+	if !req.StopPrice.IsZero() {
+		params["stopPrice"] = req.StopPrice.String()
 	}
 	if req.NewOrderRespType != "" {
 		params["newOrderRespType"] = req.NewOrderRespType
@@ -441,7 +473,7 @@ func (c *Client) GetUserTrades(symbol string, orderID, startTime, endTime, fromI
 // Transfer between spot and futures
 func (c *Client) Transfer(req *TransferRequest) (*TransferResponse, error) {
 	params := map[string]any{
-		"amount":       req.Amount,
+		"amount":       req.Amount.String(),
 		"asset":        req.Asset,
 		"clientTranId": req.ClientTranID,
 		"kindType":     req.KindType,
@@ -469,8 +501,8 @@ func (c *Client) Withdraw(req *WithdrawRequest) (*WithdrawResponse, error) {
 	params := map[string]any{
 		"chainId":       req.ChainID,
 		"asset":         req.Asset,
-		"amount":        req.Amount,
-		"fee":           req.Fee,
+		"amount":        req.Amount.String(),
+		"fee":           req.Fee.String(),
 		"receiver":      req.Receiver,
 		"nonce":         req.Nonce,
 		"userSignature": req.UserSignature,
@@ -550,7 +582,7 @@ func (c *Client) parseTicker24hr(data map[string]any, ticker *Ticker24hr) error 
 		ticker.Symbol = symbol
 	}
 	if priceChange, ok := data["priceChange"].(string); ok {
-		ticker.PriceChange = priceChange
+		ticker.PriceChange, _ = decimal.NewFromString(priceChange)
 	}
 	// Add more fields as needed
 	return nil
@@ -561,7 +593,7 @@ func (c *Client) parsePriceTicker(data map[string]any, price *PriceTicker) error
 		price.Symbol = symbol
 	}
 	if priceStr, ok := data["price"].(string); ok {
-		price.Price = priceStr
+		price.Price, _ = decimal.NewFromString(priceStr)
 	}
 	if timeVal, ok := data["time"].(float64); ok {
 		price.Time = int64(timeVal)
@@ -574,16 +606,16 @@ func (c *Client) parseBookTicker(data map[string]any, bookTicker *BookTicker) er
 		bookTicker.Symbol = symbol
 	}
 	if bidPrice, ok := data["bidPrice"].(string); ok {
-		bookTicker.BidPrice = bidPrice
+		bookTicker.BidPrice, _ = decimal.NewFromString(bidPrice)
 	}
 	if bidQty, ok := data["bidQty"].(string); ok {
-		bookTicker.BidQty = bidQty
+		bookTicker.BidQty, _ = decimal.NewFromString(bidQty)
 	}
 	if askPrice, ok := data["askPrice"].(string); ok {
-		bookTicker.AskPrice = askPrice
+		bookTicker.AskPrice, _ = decimal.NewFromString(askPrice)
 	}
 	if askQty, ok := data["askQty"].(string); ok {
-		bookTicker.AskQty = askQty
+		bookTicker.AskQty, _ = decimal.NewFromString(askQty)
 	}
 	if timeVal, ok := data["time"].(float64); ok {
 		bookTicker.Time = int64(timeVal)
@@ -593,14 +625,14 @@ func (c *Client) parseBookTicker(data map[string]any, bookTicker *BookTicker) er
 
 // NewOrderRequest represents a new order request
 type NewOrderRequest struct {
-	Symbol            string      `json:"symbol"`
-	Side              OrderSide   `json:"side"`
-	Type              OrderType   `json:"type"`
-	TimeInForce       TimeInForce `json:"timeInForce,omitempty"`
-	Quantity          string      `json:"quantity,omitempty"`
-	QuoteOrderQty     string      `json:"quoteOrderQty,omitempty"`
-	Price             string      `json:"price,omitempty"`
-	NewClientOrderID  string      `json:"newClientOrderId,omitempty"`
-	StopPrice         string      `json:"stopPrice,omitempty"`
-	NewOrderRespType  string      `json:"newOrderRespType,omitempty"`
+	Symbol            string          `json:"symbol"`
+	Side              OrderSide       `json:"side"`
+	Type              OrderType       `json:"type"`
+	TimeInForce       TimeInForce     `json:"timeInForce,omitempty"`
+	Quantity          decimal.Decimal `json:"quantity,omitempty"`
+	QuoteOrderQty     decimal.Decimal `json:"quoteOrderQty,omitempty"`
+	Price             decimal.Decimal `json:"price,omitempty"`
+	NewClientOrderID  string          `json:"newClientOrderId,omitempty"`
+	StopPrice         decimal.Decimal `json:"stopPrice,omitempty"`
+	NewOrderRespType  string          `json:"newOrderRespType,omitempty"`
 }

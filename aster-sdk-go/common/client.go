@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
+	"net/url"
 )
 
 // HTTPClient interface for making HTTP requests
@@ -61,7 +61,7 @@ func (c *Client) SetBaseURL(baseURL string) {
 
 // DoRequest performs an HTTP request
 func (c *Client) DoRequest(method, endpoint string, params map[string]any, signed bool) (*http.Response, error) {
-	url := c.config.BaseURL + endpoint
+	requestURL := c.config.BaseURL + endpoint
 	
 	var body io.Reader
 	var queryString string
@@ -70,7 +70,7 @@ func (c *Client) DoRequest(method, endpoint string, params map[string]any, signe
 		// Add parameters to query string
 		if len(params) > 0 {
 			queryString = BuildQueryString(params)
-			url += "?" + queryString
+			requestURL += "?" + queryString
 		}
 	} else {
 		// Add parameters to request body
@@ -80,7 +80,7 @@ func (c *Client) DoRequest(method, endpoint string, params map[string]any, signe
 		}
 	}
 	
-	req, err := http.NewRequest(method, url, body)
+	req, err := http.NewRequest(method, requestURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -113,8 +113,8 @@ func (c *Client) DoRequest(method, endpoint string, params map[string]any, signe
 		signature := SignRequest(signParams, c.config.SecretKey)
 		
 		if method == "GET" || method == "DELETE" {
-			url += "&signature=" + signature
-			req.URL, _ = http.ParseRequestURI(url)
+			requestURL += "&signature=" + signature
+			req.URL, _ = url.Parse(requestURL)
 		} else {
 			// Add signature to form data
 			formData := BuildQueryString(params)

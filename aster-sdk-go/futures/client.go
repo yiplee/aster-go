@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/asterdex/aster-sdk-go/common"
+	"github.com/shopspring/decimal"
 )
 
 // Client represents the futures trading client
