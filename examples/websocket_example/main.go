@@ -158,11 +158,11 @@ func testFuturesWebSocket() {
 	// Subscribe to BTCUSDT aggregated trades
 	wsClient.SubscribeAggTrade("BTCUSDT", func(aggTrade *futures.AggTrade) {
 		side := "SELL"
-		if aggTrade.M {
+		if aggTrade.IsBuyerMaker {
 			side = "BUY"
 		}
 		fmt.Printf("BTCUSDT Futures Agg Trade: %s %s @ %s (ID: %d)\n",
-			side, aggTrade.Q.String(), aggTrade.P.String(), aggTrade.A)
+			side, aggTrade.Quantity.String(), aggTrade.Price.String(), aggTrade.AggregateTradeID)
 	})
 
 	// Subscribe to BTCUSDT klines (1 minute)

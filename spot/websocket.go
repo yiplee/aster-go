@@ -31,8 +31,8 @@ func NewWebSocketClient(testnet bool) *WebSocketClient {
 // Subscribe to individual symbol ticker streams
 func (c *WebSocketClient) SubscribeTicker(symbol string, handler func(*Ticker24hr)) {
 	stream := fmt.Sprintf("%s@ticker", strings.ToLower(symbol))
-	c.Subscribe(stream, func(data any) {
-		if ticker := c.parseTicker24hr(data); ticker != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if ticker := parseTicker24hr(data); ticker != nil {
 			handler(ticker)
 		}
 	})
@@ -41,8 +41,8 @@ func (c *WebSocketClient) SubscribeTicker(symbol string, handler func(*Ticker24h
 // Subscribe to all symbols ticker stream
 func (c *WebSocketClient) SubscribeAllTickers(handler func([]Ticker24hr)) {
 	stream := "!ticker@arr"
-	c.Subscribe(stream, func(data any) {
-		if tickers := c.parseAllTickers(data); tickers != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if tickers := parseAllTickers(data); tickers != nil {
 			handler(tickers)
 		}
 	})
@@ -51,8 +51,8 @@ func (c *WebSocketClient) SubscribeAllTickers(handler func([]Ticker24hr)) {
 // Subscribe to individual symbol mini ticker streams
 func (c *WebSocketClient) SubscribeMiniTicker(symbol string, handler func(*MiniTicker)) {
 	stream := fmt.Sprintf("%s@miniTicker", strings.ToLower(symbol))
-	c.Subscribe(stream, func(data any) {
-		if ticker := c.parseMiniTicker(data); ticker != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if ticker := parseMiniTicker(data); ticker != nil {
 			handler(ticker)
 		}
 	})
@@ -61,8 +61,8 @@ func (c *WebSocketClient) SubscribeMiniTicker(symbol string, handler func(*MiniT
 // Subscribe to all symbols mini ticker stream
 func (c *WebSocketClient) SubscribeAllMiniTickers(handler func([]MiniTicker)) {
 	stream := "!miniTicker@arr"
-	c.Subscribe(stream, func(data any) {
-		if tickers := c.parseAllMiniTickers(data); tickers != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if tickers := parseAllMiniTickers(data); tickers != nil {
 			handler(tickers)
 		}
 	})
@@ -71,8 +71,8 @@ func (c *WebSocketClient) SubscribeAllMiniTickers(handler func([]MiniTicker)) {
 // Subscribe to individual symbol book ticker streams
 func (c *WebSocketClient) SubscribeBookTicker(symbol string, handler func(*BookTicker)) {
 	stream := fmt.Sprintf("%s@bookTicker", strings.ToLower(symbol))
-	c.Subscribe(stream, func(data any) {
-		if bookTicker := c.parseBookTicker(data); bookTicker != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if bookTicker := parseBookTicker(data); bookTicker != nil {
 			handler(bookTicker)
 		}
 	})
@@ -81,8 +81,8 @@ func (c *WebSocketClient) SubscribeBookTicker(symbol string, handler func(*BookT
 // Subscribe to all symbols book ticker stream
 func (c *WebSocketClient) SubscribeAllBookTickers(handler func([]BookTicker)) {
 	stream := "!bookTicker@arr"
-	c.Subscribe(stream, func(data any) {
-		if bookTickers := c.parseAllBookTickers(data); bookTickers != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if bookTickers := parseAllBookTickers(data); bookTickers != nil {
 			handler(bookTickers)
 		}
 	})
@@ -91,8 +91,8 @@ func (c *WebSocketClient) SubscribeAllBookTickers(handler func([]BookTicker)) {
 // Subscribe to individual symbol trade streams
 func (c *WebSocketClient) SubscribeTrade(symbol string, handler func(*Trade)) {
 	stream := fmt.Sprintf("%s@trade", strings.ToLower(symbol))
-	c.Subscribe(stream, func(data any) {
-		if trade := c.parseTrade(data); trade != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if trade := parseTrade(data); trade != nil {
 			handler(trade)
 		}
 	})
@@ -101,8 +101,8 @@ func (c *WebSocketClient) SubscribeTrade(symbol string, handler func(*Trade)) {
 // Subscribe to individual symbol aggregated trade streams
 func (c *WebSocketClient) SubscribeAggTrade(symbol string, handler func(*AggTrade)) {
 	stream := fmt.Sprintf("%s@aggTrade", strings.ToLower(symbol))
-	c.Subscribe(stream, func(data any) {
-		if aggTrade := c.parseAggTrade(data); aggTrade != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if aggTrade := parseAggTrade(data); aggTrade != nil {
 			handler(aggTrade)
 		}
 	})
@@ -111,8 +111,8 @@ func (c *WebSocketClient) SubscribeAggTrade(symbol string, handler func(*AggTrad
 // Subscribe to individual symbol kline streams
 func (c *WebSocketClient) SubscribeKline(symbol string, interval KlineInterval, handler func(*Kline)) {
 	stream := fmt.Sprintf("%s@kline_%s", strings.ToLower(symbol), interval)
-	c.Subscribe(stream, func(data any) {
-		if kline := c.parseKline(data); kline != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if kline := parseKline(data); kline != nil {
 			handler(kline)
 		}
 	})
@@ -126,8 +126,8 @@ func (c *WebSocketClient) SubscribeDepth(symbol string, levels int, handler func
 	} else {
 		stream = fmt.Sprintf("%s@depth", strings.ToLower(symbol))
 	}
-	c.Subscribe(stream, func(data any) {
-		if depth := c.parseDepth(data); depth != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if depth := parseDepth(data); depth != nil {
 			handler(depth)
 		}
 	})
@@ -141,8 +141,8 @@ func (c *WebSocketClient) SubscribeDepthWithUpdates(symbol string, levels int, h
 	} else {
 		stream = fmt.Sprintf("%s@depth@100ms", strings.ToLower(symbol))
 	}
-	c.Subscribe(stream, func(data any) {
-		if depth := c.parseDepth(data); depth != nil {
+	c.Subscribe(stream, func(data json.RawMessage) {
+		if depth := parseDepth(data); depth != nil {
 			handler(depth)
 		}
 	})
@@ -159,142 +159,246 @@ type MiniTicker struct {
 	CloseTime int64           `json:"C"`
 }
 
-// Parse methods for WebSocket data
+// Parse functions for WebSocket data
 
-func (c *WebSocketClient) parseTicker24hr(data any) *Ticker24hr {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
+func parseTicker24hr(data json.RawMessage) *Ticker24hr {
+	var rawData map[string]any
+	if err := json.Unmarshal(data, &rawData); err != nil {
 		return nil
 	}
 
-	var ticker Ticker24hr
-	if err := json.Unmarshal(jsonData, &ticker); err != nil {
-		return nil
+	ticker := &Ticker24hr{}
+
+	// Parse WebSocket format (single letter fields)
+	if symbol, ok := rawData["s"].(string); ok {
+		ticker.Symbol = symbol
+	}
+	if priceChange, ok := rawData["P"].(string); ok {
+		ticker.PriceChange, _ = decimal.NewFromString(priceChange)
+	}
+	if priceChangePercent, ok := rawData["p"].(string); ok {
+		ticker.PriceChangePercent, _ = decimal.NewFromString(priceChangePercent)
+	}
+	if weightedAvgPrice, ok := rawData["w"].(string); ok {
+		ticker.WeightedAvgPrice, _ = decimal.NewFromString(weightedAvgPrice)
+	}
+	if prevClosePrice, ok := rawData["x"].(string); ok {
+		ticker.PrevClosePrice, _ = decimal.NewFromString(prevClosePrice)
+	}
+	if lastPrice, ok := rawData["c"].(string); ok {
+		ticker.LastPrice, _ = decimal.NewFromString(lastPrice)
+	}
+	if lastQty, ok := rawData["Q"].(string); ok {
+		ticker.LastQty, _ = decimal.NewFromString(lastQty)
+	}
+	if bidPrice, ok := rawData["b"].(string); ok {
+		ticker.BidPrice, _ = decimal.NewFromString(bidPrice)
+	}
+	if bidQty, ok := rawData["B"].(string); ok {
+		ticker.BidQty, _ = decimal.NewFromString(bidQty)
+	}
+	if askPrice, ok := rawData["a"].(string); ok {
+		ticker.AskPrice, _ = decimal.NewFromString(askPrice)
+	}
+	if askQty, ok := rawData["A"].(string); ok {
+		ticker.AskQty, _ = decimal.NewFromString(askQty)
+	}
+	if openPrice, ok := rawData["o"].(string); ok {
+		ticker.OpenPrice, _ = decimal.NewFromString(openPrice)
+	}
+	if highPrice, ok := rawData["h"].(string); ok {
+		ticker.HighPrice, _ = decimal.NewFromString(highPrice)
+	}
+	if lowPrice, ok := rawData["l"].(string); ok {
+		ticker.LowPrice, _ = decimal.NewFromString(lowPrice)
+	}
+	if volume, ok := rawData["v"].(string); ok {
+		ticker.Volume, _ = decimal.NewFromString(volume)
+	}
+	if quoteVolume, ok := rawData["q"].(string); ok {
+		ticker.QuoteVolume, _ = decimal.NewFromString(quoteVolume)
+	}
+	if openTime, ok := rawData["O"].(float64); ok {
+		ticker.OpenTime = int64(openTime)
+	}
+	if closeTime, ok := rawData["C"].(float64); ok {
+		ticker.CloseTime = int64(closeTime)
+	}
+	if firstID, ok := rawData["F"].(float64); ok {
+		ticker.FirstID = int64(firstID)
+	}
+	if lastID, ok := rawData["L"].(float64); ok {
+		ticker.LastID = int64(lastID)
+	}
+	if count, ok := rawData["n"].(float64); ok {
+		ticker.Count = int64(count)
+	}
+	if baseAsset, ok := rawData["baseAsset"].(string); ok {
+		ticker.BaseAsset = baseAsset
+	}
+	if quoteAsset, ok := rawData["quoteAsset"].(string); ok {
+		ticker.QuoteAsset = quoteAsset
 	}
 
-	return &ticker
+	return ticker
 }
 
-func (c *WebSocketClient) parseAllTickers(data any) []Ticker24hr {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseAllTickers(data json.RawMessage) []Ticker24hr {
 	var tickers []Ticker24hr
-	if err := json.Unmarshal(jsonData, &tickers); err != nil {
+	if err := json.Unmarshal(data, &tickers); err != nil {
 		return nil
 	}
 
 	return tickers
 }
 
-func (c *WebSocketClient) parseMiniTicker(data any) *MiniTicker {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseMiniTicker(data json.RawMessage) *MiniTicker {
 	var ticker MiniTicker
-	if err := json.Unmarshal(jsonData, &ticker); err != nil {
+	if err := json.Unmarshal(data, &ticker); err != nil {
 		return nil
 	}
 
 	return &ticker
 }
 
-func (c *WebSocketClient) parseAllMiniTickers(data any) []MiniTicker {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseAllMiniTickers(data json.RawMessage) []MiniTicker {
 	var tickers []MiniTicker
-	if err := json.Unmarshal(jsonData, &tickers); err != nil {
+	if err := json.Unmarshal(data, &tickers); err != nil {
 		return nil
 	}
 
 	return tickers
 }
 
-func (c *WebSocketClient) parseBookTicker(data any) *BookTicker {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
+func parseBookTicker(data json.RawMessage) *BookTicker {
+	var rawData map[string]any
+	if err := json.Unmarshal(data, &rawData); err != nil {
 		return nil
 	}
 
-	var bookTicker BookTicker
-	if err := json.Unmarshal(jsonData, &bookTicker); err != nil {
-		return nil
+	bookTicker := &BookTicker{}
+
+	// Parse WebSocket format (single letter fields)
+	if symbol, ok := rawData["s"].(string); ok {
+		bookTicker.Symbol = symbol
+	}
+	if bidPrice, ok := rawData["b"].(string); ok {
+		bookTicker.BidPrice, _ = decimal.NewFromString(bidPrice)
+	}
+	if bidQty, ok := rawData["B"].(string); ok {
+		bookTicker.BidQty, _ = decimal.NewFromString(bidQty)
+	}
+	if askPrice, ok := rawData["a"].(string); ok {
+		bookTicker.AskPrice, _ = decimal.NewFromString(askPrice)
+	}
+	if askQty, ok := rawData["A"].(string); ok {
+		bookTicker.AskQty, _ = decimal.NewFromString(askQty)
+	}
+	if time, ok := rawData["T"].(float64); ok {
+		bookTicker.Time = int64(time)
 	}
 
-	return &bookTicker
+	return bookTicker
 }
 
-func (c *WebSocketClient) parseAllBookTickers(data any) []BookTicker {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseAllBookTickers(data json.RawMessage) []BookTicker {
 	var bookTickers []BookTicker
-	if err := json.Unmarshal(jsonData, &bookTickers); err != nil {
+	if err := json.Unmarshal(data, &bookTickers); err != nil {
 		return nil
 	}
 
 	return bookTickers
 }
 
-func (c *WebSocketClient) parseTrade(data any) *Trade {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
+func parseTrade(data json.RawMessage) *Trade {
+	var rawData map[string]any
+	if err := json.Unmarshal(data, &rawData); err != nil {
 		return nil
 	}
 
-	var trade Trade
-	if err := json.Unmarshal(jsonData, &trade); err != nil {
-		return nil
+	trade := &Trade{}
+
+	// Parse WebSocket format (single letter fields)
+	if id, ok := rawData["t"].(float64); ok {
+		trade.ID = int64(id)
+	}
+	if price, ok := rawData["p"].(string); ok {
+		trade.Price, _ = decimal.NewFromString(price)
+	}
+	if qty, ok := rawData["q"].(string); ok {
+		trade.Qty, _ = decimal.NewFromString(qty)
+	}
+	if baseQty, ok := rawData["b"].(string); ok {
+		trade.BaseQty, _ = decimal.NewFromString(baseQty)
+	}
+	if time, ok := rawData["T"].(float64); ok {
+		trade.Time = int64(time)
+	}
+	if isBuyerMaker, ok := rawData["m"].(bool); ok {
+		trade.IsBuyerMaker = isBuyerMaker
 	}
 
-	return &trade
+	return trade
 }
 
-func (c *WebSocketClient) parseAggTrade(data any) *AggTrade {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseAggTrade(data json.RawMessage) *AggTrade {
 	var aggTrade AggTrade
-	if err := json.Unmarshal(jsonData, &aggTrade); err != nil {
+	if err := json.Unmarshal(data, &aggTrade); err != nil {
 		return nil
 	}
 
 	return &aggTrade
 }
 
-func (c *WebSocketClient) parseKline(data any) *Kline {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
+func parseKline(data json.RawMessage) *Kline {
+	var rawData map[string]any
+	if err := json.Unmarshal(data, &rawData); err != nil {
 		return nil
 	}
 
-	var kline Kline
-	if err := json.Unmarshal(jsonData, &kline); err != nil {
-		return nil
+	kline := &Kline{}
+
+	// Parse WebSocket format (single letter fields)
+	if openTime, ok := rawData["t"].(float64); ok {
+		kline.OpenTime = int64(openTime)
+	}
+	if open, ok := rawData["o"].(string); ok {
+		kline.Open, _ = decimal.NewFromString(open)
+	}
+	if high, ok := rawData["h"].(string); ok {
+		kline.High, _ = decimal.NewFromString(high)
+	}
+	if low, ok := rawData["l"].(string); ok {
+		kline.Low, _ = decimal.NewFromString(low)
+	}
+	if close, ok := rawData["c"].(string); ok {
+		kline.Close, _ = decimal.NewFromString(close)
+	}
+	if volume, ok := rawData["v"].(string); ok {
+		kline.Volume, _ = decimal.NewFromString(volume)
+	}
+	if closeTime, ok := rawData["T"].(float64); ok {
+		kline.CloseTime = int64(closeTime)
+	}
+	if quoteAssetVolume, ok := rawData["q"].(string); ok {
+		kline.QuoteAssetVolume, _ = decimal.NewFromString(quoteAssetVolume)
+	}
+	if numberOfTrades, ok := rawData["n"].(float64); ok {
+		kline.NumberOfTrades = int(numberOfTrades)
+	}
+	if takerBuyBaseAssetVolume, ok := rawData["V"].(string); ok {
+		kline.TakerBuyBaseAssetVolume, _ = decimal.NewFromString(takerBuyBaseAssetVolume)
+	}
+	if takerBuyQuoteAssetVolume, ok := rawData["Q"].(string); ok {
+		kline.TakerBuyQuoteAssetVolume, _ = decimal.NewFromString(takerBuyQuoteAssetVolume)
 	}
 
-	return &kline
+	return kline
 }
 
-func (c *WebSocketClient) parseDepth(data any) *OrderBook {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return nil
-	}
-
+func parseDepth(data json.RawMessage) *OrderBook {
 	var depth OrderBook
-	if err := json.Unmarshal(jsonData, &depth); err != nil {
+	if err := json.Unmarshal(data, &depth); err != nil {
 		return nil
 	}
 

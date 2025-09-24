@@ -58,6 +58,10 @@ func (c *Client) GetExchangeInfo() (*ExchangeInfo, error) {
 
 // GetOrderBook gets the order book for a symbol
 func (c *Client) GetOrderBook(symbol string, limit int) (*OrderBook, error) {
+	if symbol == "" {
+		return nil, fmt.Errorf("symbol is required")
+	}
+
 	params := map[string]any{
 		"symbol": symbol,
 	}
@@ -72,6 +76,10 @@ func (c *Client) GetOrderBook(symbol string, limit int) (*OrderBook, error) {
 
 // GetRecentTrades gets recent trades for a symbol
 func (c *Client) GetRecentTrades(symbol string, limit int) ([]Trade, error) {
+	if symbol == "" {
+		return nil, fmt.Errorf("symbol is required")
+	}
+
 	params := map[string]any{
 		"symbol": symbol,
 	}
@@ -205,32 +213,21 @@ func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, end
 
 // GetTicker24hr gets 24hr ticker price change statistics
 func (c *Client) GetTicker24hr(symbol string) (*Ticker24hr, error) {
-	params := map[string]any{}
-	if symbol != "" {
-		params["symbol"] = symbol
+	if symbol == "" {
+		return nil, fmt.Errorf("symbol is required")
 	}
 
-	var result any
+	params := map[string]any{
+		"symbol": symbol,
+	}
+
+	var result Ticker24hr
 	err := c.Do("GET", "/api/v1/ticker/24hr", params, &result, false)
 	if err != nil {
 		return nil, err
 	}
 
-	// Handle both single ticker and array of tickers
-	switch v := result.(type) {
-	case map[string]any:
-		var ticker Ticker24hr
-		err = c.parseTicker24hr(v, &ticker)
-		return &ticker, err
-	case []any:
-		if len(v) > 0 {
-			var ticker Ticker24hr
-			err = c.parseTicker24hr(v[0].(map[string]any), &ticker)
-			return &ticker, err
-		}
-	}
-
-	return nil, fmt.Errorf("unexpected response format")
+	return &result, nil
 }
 
 // GetAllTickers24hr gets 24hr ticker price change statistics for all symbols
@@ -242,32 +239,21 @@ func (c *Client) GetAllTickers24hr() ([]Ticker24hr, error) {
 
 // GetPrice gets the latest price for a symbol
 func (c *Client) GetPrice(symbol string) (*PriceTicker, error) {
-	params := map[string]any{}
-	if symbol != "" {
-		params["symbol"] = symbol
+	if symbol == "" {
+		return nil, fmt.Errorf("symbol is required")
 	}
 
-	var result any
+	params := map[string]any{
+		"symbol": symbol,
+	}
+
+	var result PriceTicker
 	err := c.Do("GET", "/api/v1/ticker/price", params, &result, false)
 	if err != nil {
 		return nil, err
 	}
 
-	// Handle both single price and array of prices
-	switch v := result.(type) {
-	case map[string]any:
-		var price PriceTicker
-		err = c.parsePriceTicker(v, &price)
-		return &price, err
-	case []any:
-		if len(v) > 0 {
-			var price PriceTicker
-			err = c.parsePriceTicker(v[0].(map[string]any), &price)
-			return &price, err
-		}
-	}
-
-	return nil, fmt.Errorf("unexpected response format")
+	return &result, nil
 }
 
 // GetAllPrices gets the latest price for all symbols
@@ -279,32 +265,21 @@ func (c *Client) GetAllPrices() ([]PriceTicker, error) {
 
 // GetBookTicker gets the best bid/ask for a symbol
 func (c *Client) GetBookTicker(symbol string) (*BookTicker, error) {
-	params := map[string]any{}
-	if symbol != "" {
-		params["symbol"] = symbol
+	if symbol == "" {
+		return nil, fmt.Errorf("symbol is required")
 	}
 
-	var result any
+	params := map[string]any{
+		"symbol": symbol,
+	}
+
+	var result BookTicker
 	err := c.Do("GET", "/api/v1/ticker/bookTicker", params, &result, false)
 	if err != nil {
 		return nil, err
 	}
 
-	// Handle both single book ticker and array of book tickers
-	switch v := result.(type) {
-	case map[string]any:
-		var bookTicker BookTicker
-		err = c.parseBookTicker(v, &bookTicker)
-		return &bookTicker, err
-	case []any:
-		if len(v) > 0 {
-			var bookTicker BookTicker
-			err = c.parseBookTicker(v[0].(map[string]any), &bookTicker)
-			return &bookTicker, err
-		}
-	}
-
-	return nil, fmt.Errorf("unexpected response format")
+	return &result, nil
 }
 
 // GetAllBookTickers gets the best bid/ask for all symbols
@@ -571,56 +546,6 @@ func (c *Client) CloseListenKey(listenKey string) error {
 		"listenKey": listenKey,
 	}
 	return c.Do("DELETE", "/api/v1/listenKey", params, nil, true)
-}
-
-// Helper methods for parsing responses
-
-func (c *Client) parseTicker24hr(data map[string]any, ticker *Ticker24hr) error {
-	// Parse the ticker data from the map
-	// This is a simplified version - in practice you'd want more robust parsing
-	if symbol, ok := data["symbol"].(string); ok {
-		ticker.Symbol = symbol
-	}
-	if priceChange, ok := data["priceChange"].(string); ok {
-		ticker.PriceChange, _ = decimal.NewFromString(priceChange)
-	}
-	// Add more fields as needed
-	return nil
-}
-
-func (c *Client) parsePriceTicker(data map[string]any, price *PriceTicker) error {
-	if symbol, ok := data["symbol"].(string); ok {
-		price.Symbol = symbol
-	}
-	if priceStr, ok := data["price"].(string); ok {
-		price.Price, _ = decimal.NewFromString(priceStr)
-	}
-	if timeVal, ok := data["time"].(float64); ok {
-		price.Time = int64(timeVal)
-	}
-	return nil
-}
-
-func (c *Client) parseBookTicker(data map[string]any, bookTicker *BookTicker) error {
-	if symbol, ok := data["symbol"].(string); ok {
-		bookTicker.Symbol = symbol
-	}
-	if bidPrice, ok := data["bidPrice"].(string); ok {
-		bookTicker.BidPrice, _ = decimal.NewFromString(bidPrice)
-	}
-	if bidQty, ok := data["bidQty"].(string); ok {
-		bookTicker.BidQty, _ = decimal.NewFromString(bidQty)
-	}
-	if askPrice, ok := data["askPrice"].(string); ok {
-		bookTicker.AskPrice, _ = decimal.NewFromString(askPrice)
-	}
-	if askQty, ok := data["askQty"].(string); ok {
-		bookTicker.AskQty, _ = decimal.NewFromString(askQty)
-	}
-	if timeVal, ok := data["time"].(float64); ok {
-		bookTicker.Time = int64(timeVal)
-	}
-	return nil
 }
 
 // NewOrderRequest represents a new order request

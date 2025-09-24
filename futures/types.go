@@ -153,11 +153,11 @@ type Filter struct {
 
 // OrderBook represents the order book
 type OrderBook struct {
-	LastUpdateID int64      `json:"lastUpdateId"`
-	E            int64      `json:"E"` // Message output time
-	T            int64      `json:"T"` // Transaction time
-	Bids         [][]string `json:"bids"`
-	Asks         [][]string `json:"asks"`
+	LastUpdateID    int64      `json:"lastUpdateId"`
+	MessageTime     int64      `json:"messageTime"`     // Message output time
+	TransactionTime int64      `json:"transactionTime"` // Transaction time
+	Bids            [][]string `json:"bids"`
+	Asks            [][]string `json:"asks"`
 }
 
 // Trade represents a trade
@@ -172,13 +172,13 @@ type Trade struct {
 
 // AggTrade represents an aggregated trade
 type AggTrade struct {
-	A int64           `json:"a"` // Aggregate trade ID
-	P decimal.Decimal `json:"p"` // Price
-	Q decimal.Decimal `json:"q"` // Quantity
-	F int64           `json:"f"` // First trade ID
-	L int64           `json:"l"` // Last trade ID
-	T int64           `json:"T"` // Timestamp
-	M bool            `json:"m"` // Was the buyer the maker?
+	AggregateTradeID int64           `json:"aggregateTradeId"`
+	Price            decimal.Decimal `json:"price"`
+	Quantity         decimal.Decimal `json:"quantity"`
+	FirstTradeID     int64           `json:"firstTradeId"`
+	LastTradeID      int64           `json:"lastTradeId"`
+	Timestamp        int64           `json:"timestamp"`
+	IsBuyerMaker     bool            `json:"isBuyerMaker"`
 }
 
 // Kline represents a kline/candlestick

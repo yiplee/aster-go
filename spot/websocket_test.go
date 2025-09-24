@@ -1,6 +1,7 @@
 package spot
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -130,18 +131,17 @@ func TestWebSocketClientIsConnected(t *testing.T) {
 }
 
 func TestParseTicker24hr(t *testing.T) {
-	client := NewWebSocketClient(false)
-
-	// Test with valid data
+	// Test with valid data (using WebSocket single letter field names)
 	validData := map[string]any{
-		"symbol":             "BTCUSDT",
-		"priceChange":        "100.00",
-		"priceChangePercent": "2.50",
-		"lastPrice":          "41000.00",
-		"volume":             "1000.00",
+		"s": "BTCUSDT",
+		"P": "100.00",
+		"p": "2.50",
+		"c": "41000.00",
+		"v": "1000.00",
 	}
 
-	ticker := client.parseTicker24hr(validData)
+	jsonData, _ := json.Marshal(validData)
+	ticker := parseTicker24hr(jsonData)
 	if ticker == nil {
 		t.Error("Expected ticker to not be nil")
 	}
@@ -152,8 +152,6 @@ func TestParseTicker24hr(t *testing.T) {
 }
 
 func TestParseMiniTicker(t *testing.T) {
-	client := NewWebSocketClient(false)
-
 	// Test with valid data
 	validData := map[string]any{
 		"s": "BTCUSDT",
@@ -165,7 +163,8 @@ func TestParseMiniTicker(t *testing.T) {
 		"C": 1640995200000,
 	}
 
-	ticker := client.parseMiniTicker(validData)
+	jsonData, _ := json.Marshal(validData)
+	ticker := parseMiniTicker(jsonData)
 	if ticker == nil {
 		t.Error("Expected mini ticker to not be nil")
 	}
@@ -181,9 +180,7 @@ func TestParseMiniTicker(t *testing.T) {
 }
 
 func TestParseBookTicker(t *testing.T) {
-	client := NewWebSocketClient(false)
-
-	// Test with valid data
+	// Test with valid data (using actual API field names)
 	validData := map[string]any{
 		"s": "BTCUSDT",
 		"b": "40000.00",
@@ -193,7 +190,8 @@ func TestParseBookTicker(t *testing.T) {
 		"T": 1640995200000,
 	}
 
-	bookTicker := client.parseBookTicker(validData)
+	jsonData, _ := json.Marshal(validData)
+	bookTicker := parseBookTicker(jsonData)
 	if bookTicker == nil {
 		t.Error("Expected book ticker to not be nil")
 	}
@@ -209,19 +207,18 @@ func TestParseBookTicker(t *testing.T) {
 }
 
 func TestParseTrade(t *testing.T) {
-	client := NewWebSocketClient(false)
-
-	// Test with valid data
+	// Test with valid data (using actual API field names)
 	validData := map[string]any{
-		"id":           12345,
-		"price":        "40000.00",
-		"qty":          "0.001",
-		"baseQty":      "0.001",
-		"time":         1640995200000,
-		"isBuyerMaker": false,
+		"t": 12345,
+		"p": "40000.00",
+		"q": "0.001",
+		"b": "0.001",
+		"T": 1640995200000,
+		"m": false,
 	}
 
-	trade := client.parseTrade(validData)
+	jsonData, _ := json.Marshal(validData)
+	trade := parseTrade(jsonData)
 	if trade == nil {
 		t.Error("Expected trade to not be nil")
 	}
@@ -237,8 +234,6 @@ func TestParseTrade(t *testing.T) {
 }
 
 func TestParseAggTrade(t *testing.T) {
-	client := NewWebSocketClient(false)
-
 	// Test with valid data
 	validData := map[string]any{
 		"a": 12345,
@@ -250,7 +245,8 @@ func TestParseAggTrade(t *testing.T) {
 		"m": false,
 	}
 
-	aggTrade := client.parseAggTrade(validData)
+	jsonData, _ := json.Marshal(validData)
+	aggTrade := parseAggTrade(jsonData)
 	if aggTrade == nil {
 		t.Error("Expected agg trade to not be nil")
 	}
@@ -266,9 +262,7 @@ func TestParseAggTrade(t *testing.T) {
 }
 
 func TestParseKline(t *testing.T) {
-	client := NewWebSocketClient(false)
-
-	// Test with valid data
+	// Test with valid data (using actual API field names)
 	validData := map[string]any{
 		"t": 1640995200000,
 		"o": "40000.00",
@@ -283,7 +277,8 @@ func TestParseKline(t *testing.T) {
 		"Q": "20000000.00",
 	}
 
-	kline := client.parseKline(validData)
+	jsonData, _ := json.Marshal(validData)
+	kline := parseKline(jsonData)
 	if kline == nil {
 		t.Error("Expected kline to not be nil")
 	}
@@ -299,8 +294,6 @@ func TestParseKline(t *testing.T) {
 }
 
 func TestParseDepth(t *testing.T) {
-	client := NewWebSocketClient(false)
-
 	// Test with valid data
 	validData := map[string]any{
 		"lastUpdateId": 12345,
@@ -310,7 +303,8 @@ func TestParseDepth(t *testing.T) {
 		"asks":         [][]string{{"40001.00", "1.00"}},
 	}
 
-	depth := client.parseDepth(validData)
+	jsonData, _ := json.Marshal(validData)
+	depth := parseDepth(jsonData)
 	if depth == nil {
 		t.Error("Expected depth to not be nil")
 	}
