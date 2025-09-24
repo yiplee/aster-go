@@ -2,8 +2,6 @@ package futures
 
 import (
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/asterdex/aster-sdk-go/common"
 	"github.com/shopspring/decimal"
@@ -154,18 +152,27 @@ func (c *Client) GetKlines(symbol string, interval KlineInterval, startTime, end
 			continue
 		}
 		
+		open, _ := decimal.NewFromString(k[1].(string))
+		high, _ := decimal.NewFromString(k[2].(string))
+		low, _ := decimal.NewFromString(k[3].(string))
+		close, _ := decimal.NewFromString(k[4].(string))
+		volume, _ := decimal.NewFromString(k[5].(string))
+		quoteAssetVolume, _ := decimal.NewFromString(k[7].(string))
+		takerBuyBaseAssetVolume, _ := decimal.NewFromString(k[9].(string))
+		takerBuyQuoteAssetVolume, _ := decimal.NewFromString(k[10].(string))
+		
 		klines[i] = Kline{
 			OpenTime:                 int64(k[0].(float64)),
-			Open:                     k[1].(string),
-			High:                     k[2].(string),
-			Low:                      k[3].(string),
-			Close:                    k[4].(string),
-			Volume:                   k[5].(string),
+			Open:                     open,
+			High:                     high,
+			Low:                      low,
+			Close:                    close,
+			Volume:                   volume,
 			CloseTime:                int64(k[6].(float64)),
-			QuoteAssetVolume:         k[7].(string),
+			QuoteAssetVolume:         quoteAssetVolume,
 			NumberOfTrades:           int(k[8].(float64)),
-			TakerBuyBaseAssetVolume:  k[9].(string),
-			TakerBuyQuoteAssetVolume: k[10].(string),
+			TakerBuyBaseAssetVolume:  takerBuyBaseAssetVolume,
+			TakerBuyQuoteAssetVolume: takerBuyQuoteAssetVolume,
 		}
 	}
 	
@@ -200,18 +207,27 @@ func (c *Client) GetIndexPriceKlines(pair string, interval KlineInterval, startT
 			continue
 		}
 		
+		open, _ := decimal.NewFromString(k[1].(string))
+		high, _ := decimal.NewFromString(k[2].(string))
+		low, _ := decimal.NewFromString(k[3].(string))
+		close, _ := decimal.NewFromString(k[4].(string))
+		volume, _ := decimal.NewFromString(k[5].(string))
+		quoteAssetVolume, _ := decimal.NewFromString(k[7].(string))
+		takerBuyBaseAssetVolume, _ := decimal.NewFromString(k[9].(string))
+		takerBuyQuoteAssetVolume, _ := decimal.NewFromString(k[10].(string))
+		
 		klines[i] = Kline{
 			OpenTime:                 int64(k[0].(float64)),
-			Open:                     k[1].(string),
-			High:                     k[2].(string),
-			Low:                      k[3].(string),
-			Close:                    k[4].(string),
-			Volume:                   k[5].(string),
+			Open:                     open,
+			High:                     high,
+			Low:                      low,
+			Close:                    close,
+			Volume:                   volume,
 			CloseTime:                int64(k[6].(float64)),
-			QuoteAssetVolume:         k[7].(string),
+			QuoteAssetVolume:         quoteAssetVolume,
 			NumberOfTrades:           int(k[8].(float64)),
-			TakerBuyBaseAssetVolume:  k[9].(string),
-			TakerBuyQuoteAssetVolume: k[10].(string),
+			TakerBuyBaseAssetVolume:  takerBuyBaseAssetVolume,
+			TakerBuyQuoteAssetVolume: takerBuyQuoteAssetVolume,
 		}
 	}
 	
@@ -246,18 +262,27 @@ func (c *Client) GetMarkPriceKlines(symbol string, interval KlineInterval, start
 			continue
 		}
 		
+		open, _ := decimal.NewFromString(k[1].(string))
+		high, _ := decimal.NewFromString(k[2].(string))
+		low, _ := decimal.NewFromString(k[3].(string))
+		close, _ := decimal.NewFromString(k[4].(string))
+		volume, _ := decimal.NewFromString(k[5].(string))
+		quoteAssetVolume, _ := decimal.NewFromString(k[7].(string))
+		takerBuyBaseAssetVolume, _ := decimal.NewFromString(k[9].(string))
+		takerBuyQuoteAssetVolume, _ := decimal.NewFromString(k[10].(string))
+		
 		klines[i] = Kline{
 			OpenTime:                 int64(k[0].(float64)),
-			Open:                     k[1].(string),
-			High:                     k[2].(string),
-			Low:                      k[3].(string),
-			Close:                    k[4].(string),
-			Volume:                   k[5].(string),
+			Open:                     open,
+			High:                     high,
+			Low:                      low,
+			Close:                    close,
+			Volume:                   volume,
 			CloseTime:                int64(k[6].(float64)),
-			QuoteAssetVolume:         k[7].(string),
+			QuoteAssetVolume:         quoteAssetVolume,
 			NumberOfTrades:           int(k[8].(float64)),
-			TakerBuyBaseAssetVolume:  k[9].(string),
-			TakerBuyQuoteAssetVolume: k[10].(string),
+			TakerBuyBaseAssetVolume:  takerBuyBaseAssetVolume,
+			TakerBuyQuoteAssetVolume: takerBuyQuoteAssetVolume,
 		}
 	}
 	
@@ -885,22 +910,22 @@ func (c *Client) parseMarkPrice(data map[string]any, markPrice *MarkPrice) error
 		markPrice.Symbol = symbol
 	}
 	if markPriceStr, ok := data["markPrice"].(string); ok {
-		markPrice.MarkPrice = markPriceStr
+		markPrice.MarkPrice, _ = decimal.NewFromString(markPriceStr)
 	}
 	if indexPrice, ok := data["indexPrice"].(string); ok {
-		markPrice.IndexPrice = indexPrice
+		markPrice.IndexPrice, _ = decimal.NewFromString(indexPrice)
 	}
 	if estimatedSettlePrice, ok := data["estimatedSettlePrice"].(string); ok {
-		markPrice.EstimatedSettlePrice = estimatedSettlePrice
+		markPrice.EstimatedSettlePrice, _ = decimal.NewFromString(estimatedSettlePrice)
 	}
 	if lastFundingRate, ok := data["lastFundingRate"].(string); ok {
-		markPrice.LastFundingRate = lastFundingRate
+		markPrice.LastFundingRate, _ = decimal.NewFromString(lastFundingRate)
 	}
 	if nextFundingTime, ok := data["nextFundingTime"].(float64); ok {
 		markPrice.NextFundingTime = int64(nextFundingTime)
 	}
 	if interestRate, ok := data["interestRate"].(string); ok {
-		markPrice.InterestRate = interestRate
+		markPrice.InterestRate, _ = decimal.NewFromString(interestRate)
 	}
 	if timeVal, ok := data["time"].(float64); ok {
 		markPrice.Time = int64(timeVal)
@@ -915,7 +940,7 @@ func (c *Client) parseTicker24hr(data map[string]any, ticker *Ticker24hr) error 
 		ticker.Symbol = symbol
 	}
 	if priceChange, ok := data["priceChange"].(string); ok {
-		ticker.PriceChange = priceChange
+		ticker.PriceChange, _ = decimal.NewFromString(priceChange)
 	}
 	// Add more fields as needed
 	return nil
@@ -926,7 +951,7 @@ func (c *Client) parsePriceTicker(data map[string]any, price *PriceTicker) error
 		price.Symbol = symbol
 	}
 	if priceStr, ok := data["price"].(string); ok {
-		price.Price = priceStr
+		price.Price, _ = decimal.NewFromString(priceStr)
 	}
 	if timeVal, ok := data["time"].(float64); ok {
 		price.Time = int64(timeVal)

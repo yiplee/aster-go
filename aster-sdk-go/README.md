@@ -9,7 +9,7 @@ A comprehensive Go SDK for the Aster Finance exchange, providing both spot and f
 - **High Precision**: Uses `decimal.Decimal` for all price and quantity calculations
 - **Type Safety**: Strongly typed API with comprehensive error handling
 - **Comprehensive Testing**: Full test coverage with mock implementations
-- **WebSocket Support**: Real-time data streams (planned)
+- **WebSocket Support**: Real-time data streams with automatic reconnection
 - **Rate Limiting**: Built-in rate limit handling
 - **Authentication**: HMAC SHA256 signature support
 
@@ -136,6 +136,61 @@ func main() {
 }
 ```
 
+### WebSocket Real-time Data
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "os"
+    "os/signal"
+    "syscall"
+    
+    "github.com/asterdex/aster-sdk-go/spot"
+)
+
+func main() {
+    // Create WebSocket client
+    wsClient := spot.NewWebSocketClient(false) // false for mainnet
+    
+    // Connect to WebSocket
+    err := wsClient.Connect()
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer wsClient.Disconnect()
+    
+    // Subscribe to BTCUSDT ticker
+    wsClient.SubscribeTicker("BTCUSDT", func(ticker *spot.Ticker24hr) {
+        fmt.Printf("BTCUSDT: %s (Change: %s%%)\n", 
+            ticker.LastPrice.String(), ticker.PriceChangePercent.String())
+    })
+    
+    // Subscribe to BTCUSDT trades
+    wsClient.SubscribeTrade("BTCUSDT", func(trade *spot.Trade) {
+        side := "SELL"
+        if trade.IsBuyerMaker {
+            side = "BUY"
+        }
+        fmt.Printf("Trade: %s %s @ %s\n", side, trade.Qty.String(), trade.Price.String())
+    })
+    
+    // Subscribe to BTCUSDT klines
+    wsClient.SubscribeKline("BTCUSDT", spot.Interval1m, func(kline *spot.Kline) {
+        fmt.Printf("Kline: O=%s H=%s L=%s C=%s\n",
+            kline.Open.String(), kline.High.String(), 
+            kline.Low.String(), kline.Close.String())
+    })
+    
+    // Wait for interrupt signal
+    sigChan := make(chan os.Signal, 1)
+    signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+    <-sigChan
+}
+```
+
 ## API Reference
 
 ### Spot Trading
@@ -163,6 +218,17 @@ func main() {
 - `GetUserTrades(symbol, orderID, startTime, endTime, fromID, limit)` - Get user trades
 - `Transfer(req)` - Transfer between spot and futures
 - `GetCommissionRate(symbol)` - Get commission rates
+
+#### WebSocket Streams
+- `NewWebSocketClient(testnet)` - Create WebSocket client
+- `SubscribeTicker(symbol, handler)` - Subscribe to ticker stream
+- `SubscribeMiniTicker(symbol, handler)` - Subscribe to mini ticker stream
+- `SubscribeBookTicker(symbol, handler)` - Subscribe to book ticker stream
+- `SubscribeTrade(symbol, handler)` - Subscribe to trade stream
+- `SubscribeAggTrade(symbol, handler)` - Subscribe to aggregated trade stream
+- `SubscribeKline(symbol, interval, handler)` - Subscribe to kline stream
+- `SubscribeDepth(symbol, levels, handler)` - Subscribe to depth stream
+- `SubscribeAllTickers(handler)` - Subscribe to all tickers stream
 
 ### Futures Trading
 
@@ -199,6 +265,20 @@ func main() {
 - `ChangeMultiAssetsMode(req)` - Change multi-assets mode
 - `ChangeLeverage(req)` - Change leverage
 - `ChangeMarginType(req)` - Change margin type
+
+#### WebSocket Streams
+- `NewWebSocketClient(testnet)` - Create WebSocket client
+- `SubscribeTicker(symbol, handler)` - Subscribe to ticker stream
+- `SubscribeMiniTicker(symbol, handler)` - Subscribe to mini ticker stream
+- `SubscribeBookTicker(symbol, handler)` - Subscribe to book ticker stream
+- `SubscribeTrade(symbol, handler)` - Subscribe to trade stream
+- `SubscribeAggTrade(symbol, handler)` - Subscribe to aggregated trade stream
+- `SubscribeKline(symbol, interval, handler)` - Subscribe to kline stream
+- `SubscribeDepth(symbol, levels, handler)` - Subscribe to depth stream
+- `SubscribeMarkPrice(symbol, handler)` - Subscribe to mark price stream
+- `SubscribeAllMarkPrices(handler)` - Subscribe to all mark prices stream
+- `SubscribeFundingRate(symbol, handler)` - Subscribe to funding rate stream
+- `SubscribeAllTickers(handler)` - Subscribe to all tickers stream
 
 ## Configuration
 

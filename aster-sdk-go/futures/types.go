@@ -1,8 +1,6 @@
 package futures
 
 import (
-	"time"
-
 	"github.com/shopspring/decimal"
 )
 
@@ -185,44 +183,44 @@ type AggTrade struct {
 
 // Kline represents a kline/candlestick
 type Kline struct {
-	OpenTime                 int64   `json:"openTime"`
-	Open                     string  `json:"open"`
-	High                     string  `json:"high"`
-	Low                      string  `json:"low"`
-	Close                    string  `json:"close"`
-	Volume                   string  `json:"volume"`
-	CloseTime                int64   `json:"closeTime"`
-	QuoteAssetVolume         string  `json:"quoteAssetVolume"`
-	NumberOfTrades           int     `json:"numberOfTrades"`
-	TakerBuyBaseAssetVolume  string  `json:"takerBuyBaseAssetVolume"`
-	TakerBuyQuoteAssetVolume string  `json:"takerBuyQuoteAssetVolume"`
+	OpenTime                 int64           `json:"openTime"`
+	Open                     decimal.Decimal `json:"open"`
+	High                     decimal.Decimal `json:"high"`
+	Low                      decimal.Decimal `json:"low"`
+	Close                    decimal.Decimal `json:"close"`
+	Volume                   decimal.Decimal `json:"volume"`
+	CloseTime                int64           `json:"closeTime"`
+	QuoteAssetVolume         decimal.Decimal `json:"quoteAssetVolume"`
+	NumberOfTrades           int             `json:"numberOfTrades"`
+	TakerBuyBaseAssetVolume  decimal.Decimal `json:"takerBuyBaseAssetVolume"`
+	TakerBuyQuoteAssetVolume decimal.Decimal `json:"takerBuyQuoteAssetVolume"`
 }
 
 // Ticker24hr represents 24hr ticker statistics
 type Ticker24hr struct {
-	Symbol             string `json:"symbol"`
-	PriceChange        string `json:"priceChange"`
-	PriceChangePercent string `json:"priceChangePercent"`
-	WeightedAvgPrice   string `json:"weightedAvgPrice"`
-	PrevClosePrice     string `json:"prevClosePrice"`
-	LastPrice          string `json:"lastPrice"`
-	LastQty            string `json:"lastQty"`
-	BidPrice            string `json:"bidPrice"`
-	BidQty              string `json:"bidQty"`
-	AskPrice            string `json:"askPrice"`
-	AskQty              string `json:"askQty"`
-	OpenPrice           string `json:"openPrice"`
-	HighPrice           string `json:"highPrice"`
-	LowPrice            string `json:"lowPrice"`
-	Volume              decimal.Decimal `json:"volume"`
-	QuoteVolume         string `json:"quoteVolume"`
-	OpenTime            int64  `json:"openTime"`
-	CloseTime           int64  `json:"closeTime"`
-	FirstID             int64  `json:"firstId"`
-	LastID              int64  `json:"lastId"`
-	Count               int64  `json:"count"`
-	BaseAsset           string `json:"baseAsset"`
-	QuoteAsset          string `json:"quoteAsset"`
+	Symbol             string          `json:"symbol"`
+	PriceChange        decimal.Decimal `json:"priceChange"`
+	PriceChangePercent decimal.Decimal `json:"priceChangePercent"`
+	WeightedAvgPrice   decimal.Decimal `json:"weightedAvgPrice"`
+	PrevClosePrice     decimal.Decimal `json:"prevClosePrice"`
+	LastPrice          decimal.Decimal `json:"lastPrice"`
+	LastQty            decimal.Decimal `json:"lastQty"`
+	BidPrice           decimal.Decimal `json:"bidPrice"`
+	BidQty             decimal.Decimal `json:"bidQty"`
+	AskPrice           decimal.Decimal `json:"askPrice"`
+	AskQty             decimal.Decimal `json:"askQty"`
+	OpenPrice          decimal.Decimal `json:"openPrice"`
+	HighPrice          decimal.Decimal `json:"highPrice"`
+	LowPrice           decimal.Decimal `json:"lowPrice"`
+	Volume             decimal.Decimal `json:"volume"`
+	QuoteVolume        decimal.Decimal `json:"quoteVolume"`
+	OpenTime           int64           `json:"openTime"`
+	CloseTime          int64           `json:"closeTime"`
+	FirstID            int64           `json:"firstId"`
+	LastID             int64           `json:"lastId"`
+	Count              int64           `json:"count"`
+	BaseAsset          string          `json:"baseAsset"`
+	QuoteAsset         string          `json:"quoteAsset"`
 }
 
 // PriceTicker represents a price ticker
@@ -244,21 +242,21 @@ type BookTicker struct {
 
 // MarkPrice represents mark price
 type MarkPrice struct {
-	Symbol               string `json:"symbol"`
-	MarkPrice            string `json:"markPrice"`
-	IndexPrice           string `json:"indexPrice"`
-	EstimatedSettlePrice string `json:"estimatedSettlePrice"`
-	LastFundingRate      string `json:"lastFundingRate"`
-	NextFundingTime      int64  `json:"nextFundingTime"`
-	InterestRate         string `json:"interestRate"`
-	Time                 int64  `json:"time"`
+	Symbol               string          `json:"symbol"`
+	MarkPrice            decimal.Decimal `json:"markPrice"`
+	IndexPrice           decimal.Decimal `json:"indexPrice"`
+	EstimatedSettlePrice decimal.Decimal `json:"estimatedSettlePrice"`
+	LastFundingRate      decimal.Decimal `json:"lastFundingRate"`
+	NextFundingTime      int64           `json:"nextFundingTime"`
+	InterestRate         decimal.Decimal `json:"interestRate"`
+	Time                 int64           `json:"time"`
 }
 
 // FundingRate represents funding rate
 type FundingRate struct {
-	Symbol               string `json:"symbol"`
-	FundingRate          string `json:"fundingRate"`
-	FundingTime          int64  `json:"fundingTime"`
+	Symbol      string          `json:"symbol"`
+	FundingRate decimal.Decimal `json:"fundingRate"`
+	FundingTime int64           `json:"fundingTime"`
 }
 
 // FundingRateConfig represents funding rate configuration
@@ -486,21 +484,21 @@ type PositionMarginChangeHistory struct {
 
 // NewOrderRequest represents a new order request
 type NewOrderRequest struct {
-	Symbol           string      `json:"symbol"`
-	Side             OrderSide   `json:"side"`
-	Type             OrderType   `json:"type"`
-	TimeInForce      TimeInForce `json:"timeInForce,omitempty"`
-	Quantity         string      `json:"quantity,omitempty"`
-	QuoteOrderQty    string      `json:"quoteOrderQty,omitempty"`
-	Price            string      `json:"price,omitempty"`
-	NewClientOrderID string      `json:"newClientOrderId,omitempty"`
-	StopPrice        string      `json:"stopPrice,omitempty"`
-	WorkingType      WorkingType `json:"workingType,omitempty"`
-	PriceProtect     bool        `json:"priceProtect,omitempty"`
-	NewOrderRespType string      `json:"newOrderRespType,omitempty"`
-	ClosePosition    bool        `json:"closePosition,omitempty"`
-	ReduceOnly       bool        `json:"reduceOnly,omitempty"`
-	PositionSide     PositionSide `json:"positionSide,omitempty"`
+	Symbol           string          `json:"symbol"`
+	Side             OrderSide       `json:"side"`
+	Type             OrderType       `json:"type"`
+	TimeInForce      TimeInForce     `json:"timeInForce,omitempty"`
+	Quantity         decimal.Decimal `json:"quantity,omitempty"`
+	QuoteOrderQty    decimal.Decimal `json:"quoteOrderQty,omitempty"`
+	Price            decimal.Decimal `json:"price,omitempty"`
+	NewClientOrderID string          `json:"newClientOrderId,omitempty"`
+	StopPrice        decimal.Decimal `json:"stopPrice,omitempty"`
+	WorkingType      WorkingType     `json:"workingType,omitempty"`
+	PriceProtect     bool            `json:"priceProtect,omitempty"`
+	NewOrderRespType string          `json:"newOrderRespType,omitempty"`
+	ClosePosition    bool            `json:"closePosition,omitempty"`
+	ReduceOnly       bool            `json:"reduceOnly,omitempty"`
+	PositionSide     PositionSide    `json:"positionSide,omitempty"`
 }
 
 // ListenKeyResponse represents a listen key response

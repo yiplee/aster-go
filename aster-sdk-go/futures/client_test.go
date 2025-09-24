@@ -2,7 +2,6 @@ package futures
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"net/http"
 	"testing"
@@ -216,7 +215,7 @@ func TestGetRecentTrades(t *testing.T) {
 		t.Errorf("Expected 1 trade, got %d", len(trades))
 	}
 	
-	expectedPrice := decimal.NewFromString("1.01000000")
+	expectedPrice, _ := decimal.NewFromString("1.01000000")
 	if trades[0].Price.Cmp(expectedPrice) != 0 {
 		t.Errorf("Expected price %s, got %s", expectedPrice.String(), trades[0].Price.String())
 	}
@@ -261,7 +260,7 @@ func TestGetKlines(t *testing.T) {
 		t.Errorf("Expected 1 kline, got %d", len(klines))
 	}
 	
-	expectedOpen := decimal.NewFromString("0.01634790")
+	expectedOpen, _ := decimal.NewFromString("0.01634790")
 	if klines[0].Open.Cmp(expectedOpen) != 0 {
 		t.Errorf("Expected open %s, got %s", expectedOpen.String(), klines[0].Open.String())
 	}
@@ -301,7 +300,7 @@ func TestGetMarkPrice(t *testing.T) {
 		t.Errorf("Expected symbol 'BTCUSDT', got '%s'", markPrice.Symbol)
 	}
 	
-	expectedMarkPrice := decimal.NewFromString("50000.00")
+	expectedMarkPrice, _ := decimal.NewFromString("50000.00")
 	if markPrice.MarkPrice.Cmp(expectedMarkPrice) != 0 {
 		t.Errorf("Expected mark price %s, got %s", expectedMarkPrice.String(), markPrice.MarkPrice.String())
 	}
@@ -356,7 +355,7 @@ func TestGetTicker24hr(t *testing.T) {
 		t.Errorf("Expected symbol 'BTCUSDT', got '%s'", ticker.Symbol)
 	}
 	
-	expectedPriceChange := decimal.NewFromString("-94.99999800")
+	expectedPriceChange, _ := decimal.NewFromString("-94.99999800")
 	if ticker.PriceChange.Cmp(expectedPriceChange) != 0 {
 		t.Errorf("Expected price change %s, got %s", expectedPriceChange.String(), ticker.PriceChange.String())
 	}
@@ -487,7 +486,7 @@ func TestGetAccount(t *testing.T) {
 		t.Error("Expected canTrade to be true")
 	}
 	
-	expectedTotalWalletBalance := decimal.NewFromString("1000.00")
+	expectedTotalWalletBalance, _ := decimal.NewFromString("1000.00")
 	if account.TotalWalletBalance.Cmp(expectedTotalWalletBalance) != 0 {
 		t.Errorf("Expected total wallet balance %s, got %s", expectedTotalWalletBalance.String(), account.TotalWalletBalance.String())
 	}
