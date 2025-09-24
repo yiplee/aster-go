@@ -514,14 +514,14 @@ func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
 		"type":   req.Type,
 	}
 	
-	if req.Quantity != "" {
-		params["quantity"] = req.Quantity
+	if !req.Quantity.IsZero() {
+		params["quantity"] = req.Quantity.String()
 	}
-	if req.QuoteOrderQty != "" {
-		params["quoteOrderQty"] = req.QuoteOrderQty
+	if !req.QuoteOrderQty.IsZero() {
+		params["quoteOrderQty"] = req.QuoteOrderQty.String()
 	}
-	if req.Price != "" {
-		params["price"] = req.Price
+	if !req.Price.IsZero() {
+		params["price"] = req.Price.String()
 	}
 	if req.TimeInForce != "" {
 		params["timeInForce"] = req.TimeInForce
@@ -529,8 +529,8 @@ func (c *Client) NewOrder(req *NewOrderRequest) (*Order, error) {
 	if req.NewClientOrderID != "" {
 		params["newClientOrderId"] = req.NewClientOrderID
 	}
-	if req.StopPrice != "" {
-		params["stopPrice"] = req.StopPrice
+	if !req.StopPrice.IsZero() {
+		params["stopPrice"] = req.StopPrice.String()
 	}
 	if req.WorkingType != "" {
 		params["workingType"] = req.WorkingType

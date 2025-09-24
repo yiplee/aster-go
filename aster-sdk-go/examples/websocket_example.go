@@ -85,7 +85,7 @@ func testSpotWebSocket() {
 	})
 	
 	// Subscribe to BTCUSDT depth
-	wsClient.SubscribeDepth("BTCUSDT", 5, func(depth *spot.DepthResponse) {
+	wsClient.SubscribeDepth("BTCUSDT", 5, func(depth *spot.OrderBook) {
 		fmt.Printf("BTCUSDT Depth: LastUpdateID=%d, Bids=%d, Asks=%d\n",
 			depth.LastUpdateID, len(depth.Bids), len(depth.Asks))
 	})
@@ -143,7 +143,7 @@ func testFuturesWebSocket() {
 	// Subscribe to BTCUSDT mark price
 	wsClient.SubscribeMarkPrice("BTCUSDT", func(markPrice *futures.MarkPrice) {
 		fmt.Printf("BTCUSDT Mark Price: %s (Index: %s, Funding: %s)\n",
-			markPrice.MarkPrice.String(), markPrice.IndexPrice.String(), markPrice.FundingRate.String())
+			markPrice.MarkPrice.String(), markPrice.IndexPrice.String(), markPrice.LastFundingRate.String())
 	})
 	
 	// Subscribe to BTCUSDT trades

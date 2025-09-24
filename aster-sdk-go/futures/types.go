@@ -172,13 +172,13 @@ type Trade struct {
 
 // AggTrade represents an aggregated trade
 type AggTrade struct {
-	A  int64  `json:"a"` // Aggregate trade ID
-	P  string `json:"p"` // Price
-	Q  string `json:"q"` // Quantity
-	F  int64  `json:"f"` // First trade ID
-	L  int64  `json:"l"` // Last trade ID
-	T  int64  `json:"T"` // Timestamp
-	M  bool   `json:"m"` // Was the buyer the maker?
+	A  int64           `json:"a"` // Aggregate trade ID
+	P  decimal.Decimal `json:"p"` // Price
+	Q  decimal.Decimal `json:"q"` // Quantity
+	F  int64           `json:"f"` // First trade ID
+	L  int64           `json:"l"` // Last trade ID
+	T  int64           `json:"T"` // Timestamp
+	M  bool            `json:"m"` // Was the buyer the maker?
 }
 
 // Kline represents a kline/candlestick
